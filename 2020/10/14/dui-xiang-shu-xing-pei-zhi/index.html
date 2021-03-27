@@ -1,4 +1,200 @@
-<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=2"><meta name="theme-color" content="#222"><meta name="generator" content="Hexo 5.2.0"><link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png"><link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.ico"><link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png"><link rel="mask-icon" href="/images/logo.svg" color="#222"><link rel="stylesheet" href="/css/main.css"><link rel="stylesheet" href="/lib/font-awesome/css/all.min.css"><script id="hexo-configurations">var NexT=window.NexT||{},CONFIG={hostname:"mimyue-hcm.github.io",root:"/",scheme:"Muse",version:"7.8.0",exturl:!1,sidebar:{position:"left",display:"post",padding:18,offset:12,onmobile:!1},copycode:{enable:!1,show_result:!1,style:null},back2top:{enable:!0,sidebar:!1,scrollpercent:!0},bookmark:{enable:!1,color:"#222",save:"auto"},fancybox:!1,mediumzoom:!1,lazyload:!1,pangu:!1,comments:{style:"tabs",active:null,storage:!0,lazyload:!1,nav:null},algolia:{hits:{per_page:10},labels:{input_placeholder:"Search for Posts",hits_empty:"We didn't find any results for the search: ${query}",hits_stats:"${hits} results found in ${time} ms"}},localsearch:{enable:!0,trigger:"auto",top_n_per_article:1,unescape:!1,preload:!1},motion:{enable:!0,async:!1,transition:{post_block:"fadeIn",post_header:"slideDownIn",post_body:"slideDownIn",coll_header:"slideLeftIn",sidebar:"slideUpIn"}},path:"search.xml"}</script><meta name="description" content="前言： 我们知道js对象中可以存储属性和方法，对于存储的属性不只是”键值对”，对象属性实际上还有更加灵活强大的东西  下面我们来看一下对象属性到底还有声明nb功能呢？   属性的分类 对象属性有两种类别   数据属性：键值对形式 访问器属性：用于获取和设置值的函数  属性标志和属性描述符 对象属性，除了**value** 外，还有三个特殊的特性（attributes）   writable — 如"><meta property="og:type" content="article"><meta property="og:title" content="对象属性配置"><meta property="og:url" content="http://mimyue-hcm.github.io/2020/10/14/dui-xiang-shu-xing-pei-zhi/index.html"><meta property="og:site_name" content="忞月的博客"><meta property="og:description" content="前言： 我们知道js对象中可以存储属性和方法，对于存储的属性不只是”键值对”，对象属性实际上还有更加灵活强大的东西  下面我们来看一下对象属性到底还有声明nb功能呢？   属性的分类 对象属性有两种类别   数据属性：键值对形式 访问器属性：用于获取和设置值的函数  属性标志和属性描述符 对象属性，除了**value** 外，还有三个特殊的特性（attributes）   writable — 如"><meta property="og:locale" content="zh_CN"><meta property="article:published_time" content="2020-10-14T05:06:27.000Z"><meta property="article:modified_time" content="2020-12-21T01:42:33.741Z"><meta property="article:author" content="忞月"><meta property="article:tag" content="js基础"><meta name="twitter:card" content="summary"><link rel="canonical" href="http://mimyue-hcm.github.io/2020/10/14/dui-xiang-shu-xing-pei-zhi/"><script id="page-configurations">CONFIG.page={sidebar:"",isHome:!1,isPost:!0,lang:"zh-CN"}</script><title>对象属性配置 | 忞月的博客</title><noscript><style>.sidebar-inner,.use-motion .brand,.use-motion .collection-header,.use-motion .comments,.use-motion .menu-item,.use-motion .pagination,.use-motion .post-block,.use-motion .post-body,.use-motion .post-header{opacity:initial}.use-motion .site-subtitle,.use-motion .site-title{opacity:initial;top:initial}.use-motion .logo-line-before i{left:initial}.use-motion .logo-line-after i{right:initial}</style></noscript><style lang="css">#loading-container{position:fixed;top:0;left:0;min-height:100vh;width:100vw;z-index:9999;display:flex;flex-direction:column;justify-content:center;align-items:center;background:#fff;text-align:center;-webkit-transition:opacity 1s ease;-moz-transition:opacity 1s ease;-o-transition:opacity 1s ease;transition:opacity 1s ease}.loading-image{width:120px;height:50px;transform:translate(-50%)}.loading-image div:nth-child(2){-webkit-animation:pacman-balls 1s linear 0s infinite;animation:pacman-balls 1s linear 0s infinite}.loading-image div:nth-child(3){-webkit-animation:pacman-balls 1s linear .33s infinite;animation:pacman-balls 1s linear .33s infinite}.loading-image div:nth-child(4){-webkit-animation:pacman-balls 1s linear .66s infinite;animation:pacman-balls 1s linear .66s infinite}.loading-image div:nth-child(5){-webkit-animation:pacman-balls 1s linear .99s infinite;animation:pacman-balls 1s linear .99s infinite}.loading-image div:first-of-type{width:0;height:0;border:25px solid #49b1f5;border-right-color:transparent;border-radius:25px;-webkit-animation:rotate_pacman_half_up .5s 0s infinite;animation:rotate_pacman_half_up .5s 0s infinite}.loading-image div:nth-child(2){width:0;height:0;border:25px solid #49b1f5;border-right-color:transparent;border-radius:25px;-webkit-animation:rotate_pacman_half_down .5s 0s infinite;animation:rotate_pacman_half_down .5s 0s infinite;margin-top:-50px}@-webkit-keyframes rotate_pacman_half_up{0%{transform:rotate(270deg)}50%{transform:rotate(1turn)}to{transform:rotate(270deg)}}@keyframes rotate_pacman_half_up{0%{transform:rotate(270deg)}50%{transform:rotate(1turn)}to{transform:rotate(270deg)}}@-webkit-keyframes rotate_pacman_half_down{0%{transform:rotate(90deg)}50%{transform:rotate(0)}to{transform:rotate(90deg)}}@keyframes rotate_pacman_half_down{0%{transform:rotate(90deg)}50%{transform:rotate(0)}to{transform:rotate(90deg)}}@-webkit-keyframes pacman-balls{75%{opacity:.7}to{transform:translate(-100px,-6.25px)}}@keyframes pacman-balls{75%{opacity:.7}to{transform:translate(-100px,-6.25px)}}.loading-image div:nth-child(3),.loading-image div:nth-child(4),.loading-image div:nth-child(5),.loading-image div:nth-child(6){background-color:#49b1f5;width:15px;height:15px;border-radius:100%;margin:2px;width:10px;height:10px;position:absolute;transform:translateY(-6.25px);top:25px;left:100px}.loading-text{margin-bottom:20vh;text-align:center;color:#2c3e50;font-size:2rem;box-sizing:border-box;padding:0 10px;text-shadow:0 2px 10px rgba(0,0,0,.2)}@media only screen and (max-width:500px){.loading-text{font-size:1.5rem}}.fadeout{opacity:0}@-webkit-keyframes fadeInDown{0%{opacity:0;-webkit-transform:translate3d(0,-100%,0);transform:translate3d(0,-100%,0)}100%{opacity:1;-webkit-transform:none;transform:none}}@keyframes fadeInDown{0%{opacity:0;-webkit-transform:translate3d(0,-100%,0)}}</style><script>(function () {
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"mimyue-hcm.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="前言： 我们知道js对象中可以存储属性和方法，对于存储的属性不只是”键值对”，对象属性实际上还有更加灵活强大的东西  下面我们来看一下对象属性到底还有声明nb功能呢？   属性的分类 对象属性有两种类别   数据属性：键值对形式 访问器属性：用于获取和设置值的函数  属性标志和属性描述符 对象属性，除了**value** 外，还有三个特殊的特性（attributes）   writable — 如">
+<meta property="og:type" content="article">
+<meta property="og:title" content="对象属性配置">
+<meta property="og:url" content="http://mimyue-hcm.github.io/2020/10/14/dui-xiang-shu-xing-pei-zhi/index.html">
+<meta property="og:site_name" content="忞月的博客">
+<meta property="og:description" content="前言： 我们知道js对象中可以存储属性和方法，对于存储的属性不只是”键值对”，对象属性实际上还有更加灵活强大的东西  下面我们来看一下对象属性到底还有声明nb功能呢？   属性的分类 对象属性有两种类别   数据属性：键值对形式 访问器属性：用于获取和设置值的函数  属性标志和属性描述符 对象属性，除了**value** 外，还有三个特殊的特性（attributes）   writable — 如">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-10-14T05:06:27.000Z">
+<meta property="article:modified_time" content="2020-12-21T01:42:33.741Z">
+<meta property="article:author" content="忞月">
+<meta property="article:tag" content="js基础">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://mimyue-hcm.github.io/2020/10/14/dui-xiang-shu-xing-pei-zhi/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>对象属性配置 | 忞月的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<style type="text/css" lang="css">
+    #loading-container{
+        position: fixed;
+        top: 0;
+        left: 0;
+        min-height: 100vh;
+        width: 100vw;
+        z-index: 9999;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background: #FFF;
+        text-align: center;
+        /* loader页面消失采用渐隐的方式*/
+        -webkit-transition: opacity 1s ease;
+        -moz-transition: opacity 1s ease;
+        -o-transition: opacity 1s ease;
+        transition: opacity 1s ease;
+    }
+    .loading-image{
+        width: 120px;
+        height: 50px;
+        transform: translate(-50%);
+    }
+    
+    .loading-image div:nth-child(2) {
+        -webkit-animation: pacman-balls 1s linear 0s infinite;
+        animation: pacman-balls 1s linear 0s infinite
+    }
+
+    .loading-image div:nth-child(3) {
+        -webkit-animation: pacman-balls 1s linear .33s infinite;
+        animation: pacman-balls 1s linear .33s infinite
+    }
+
+    .loading-image div:nth-child(4) {
+        -webkit-animation: pacman-balls 1s linear .66s infinite;
+        animation: pacman-balls 1s linear .66s infinite
+    }
+
+    .loading-image div:nth-child(5) {
+        -webkit-animation: pacman-balls 1s linear .99s infinite;
+        animation: pacman-balls 1s linear .99s infinite
+    }
+    
+   .loading-image div:first-of-type {
+        width: 0;
+        height: 0;
+        border: 25px solid #49b1f5;
+        border-right-color: transparent;
+        border-radius: 25px;
+        -webkit-animation: rotate_pacman_half_up .5s 0s infinite;
+        animation: rotate_pacman_half_up .5s 0s infinite;
+    }
+    .loading-image div:nth-child(2) {
+        width: 0;
+        height: 0;
+        border: 25px solid #49b1f5;
+        border-right-color: transparent;
+        border-radius: 25px;
+        -webkit-animation: rotate_pacman_half_down .5s 0s infinite;
+        animation: rotate_pacman_half_down .5s 0s infinite;
+        margin-top: -50px;
+    }
+    @-webkit-keyframes rotate_pacman_half_up {0% {transform: rotate(270deg)}50% {transform: rotate(1turn)}to {transform: rotate(270deg)}}
+
+    @keyframes rotate_pacman_half_up {0% {transform: rotate(270deg)}50% {transform: rotate(1turn)}to {transform: rotate(270deg)}}
+
+    @-webkit-keyframes rotate_pacman_half_down {0% {transform: rotate(90deg)}50% {transform: rotate(0deg)}to {transform: rotate(90deg)}}
+
+    @keyframes rotate_pacman_half_down {0% {transform: rotate(90deg)}50% {transform: rotate(0deg)}to {transform: rotate(90deg)}}
+    
+    @-webkit-keyframes pacman-balls {75% {opacity: .7}to {transform: translate(-100px, -6.25px)}}
+
+    @keyframes pacman-balls {75% {opacity: .7}to {transform: translate(-100px, -6.25px)}}
+    
+   
+    .loading-image div:nth-child(3),
+    .loading-image div:nth-child(4),
+    .loading-image div:nth-child(5),
+    .loading-image div:nth-child(6){
+        background-color: #49b1f5;
+        width: 15px;
+        height: 15px;
+        border-radius: 100%;
+        margin: 2px;
+        width: 10px;
+        height: 10px;
+        position: absolute;
+        transform: translateY(-6.25px);
+        top: 25px;
+        left: 100px;
+    }
+    .loading-text{
+        margin-bottom: 20vh;
+        text-align: center;
+        color: #2c3e50;
+        font-size: 2rem;
+        box-sizing: border-box;
+        padding: 0 10px;
+        text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    }
+    @media only screen and (max-width: 500px) {
+         .loading-text{
+            font-size: 1.5rem;
+         }
+    }
+    .fadeout {
+        opacity: 0;
+        filter: alpha(opacity=0);
+    }
+    /* logo出现动画 */
+    @-webkit-keyframes fadeInDown{0%{opacity:0;-webkit-transform:translate3d(0,-100%,0);transform:translate3d(0,-100%,0)}100%{opacity:1;-webkit-transform:none;transform:none}}
+    @keyframes fadeInDown{0%{opacity:0;-webkit-transform:translate3d(0,-100%,0);}}
+ </style>
+ <script>
+(function () {
     const loaded = function(){
        setTimeout(function(){
             const loader = document.getElementById("loading-container");
@@ -10,68 +206,297 @@
         },1000);//强制显示loading page 1s  
     };
     loaded();
-})()</script><style>.github-emoji{position:relative;display:inline-block;width:1.2em;min-height:1.2em;overflow:hidden;vertical-align:top;color:transparent}.github-emoji>span{position:relative;z-index:10}.github-emoji .fancybox,.github-emoji img{margin:0!important;padding:0!important;border:none!important;outline:0!important;text-decoration:none!important;user-select:none!important;cursor:auto!important}.github-emoji img{height:1.2em!important;width:1.2em!important;position:absolute!important;left:50%!important;top:50%!important;transform:translate(-50%,-50%)!important;user-select:none!important;cursor:auto!important}.github-emoji-fallback{color:inherit}.github-emoji-fallback img{opacity:0!important}</style></head><body itemscope itemtype="http://schema.org/WebPage"><div class="container use-motion"><div class="headband"></div><header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="header-inner"><div class="site-brand-container"><div class="site-nav-toggle"><div class="toggle" aria-label="切换导航栏"><span class="toggle-line toggle-line-first"></span><span class="toggle-line toggle-line-middle"></span><span class="toggle-line toggle-line-last"></span></div></div><div class="site-meta"><a href="/" class="brand" rel="start"><span class="logo-line-before"><i></i></span><h1 class="site-title">忞月的博客</h1><span class="logo-line-after"><i></i></span></a></div><div class="site-nav-right"><div class="toggle popup-trigger"><i class="fa fa-search fa-fw fa-lg"></i></div></div></div><nav class="site-nav"><ul id="menu" class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i> 首页</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i> 归档</a></li><li class="menu-item menu-item-search"><a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i> 搜索</a></li></ul></nav><div class="search-pop-overlay"><div class="popup search-popup"><div class="search-header"><span class="search-icon"><i class="fa fa-search"></i></span><div class="search-input-container"><input autocomplete="off" autocapitalize="off" placeholder="搜索..." spellcheck="false" type="search" class="search-input"></div><span class="popup-btn-close"><i class="fa fa-times-circle"></i></span></div><div id="search-result"><div id="no-result"><i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i></div></div></div></div></div></header><div class="back-to-top"><i class="fa fa-arrow-up"></i> <span>0%</span></div><main class="main"><div class="main-inner"><div class="content-wrap"><div class="content post posts-expand"><article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN"><link itemprop="mainEntityOfPage" href="http://mimyue-hcm.github.io/2020/10/14/dui-xiang-shu-xing-pei-zhi/"><span hidden itemprop="author" itemscope itemtype="http://schema.org/Person"><meta itemprop="image" content="/images/avatar.gif"><meta itemprop="name" content="忞月"><meta itemprop="description" content=""></span><span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization"><meta itemprop="name" content="忞月的博客"></span><header class="post-header"><h1 class="post-title" itemprop="name headline">对象属性配置</h1><div class="post-meta"><span class="post-meta-item"><span class="post-meta-item-icon"><i class="far fa-calendar"></i></span> <span class="post-meta-item-text">发表于</span> <time title="创建时间：2020-10-14 13:06:27" itemprop="dateCreated datePublished" datetime="2020-10-14T13:06:27+08:00">2020-10-14</time></span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="far fa-calendar-check"></i></span> <span class="post-meta-item-text">更新于</span> <time title="修改时间：2020-12-21 09:42:33" itemprop="dateModified" datetime="2020-12-21T09:42:33+08:00">2020-12-21</time></span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="far fa-folder"></i></span> <span class="post-meta-item-text">分类于</span> <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/JavaScript/" itemprop="url" rel="index"><span itemprop="name">JavaScript</span></a></span></span><span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display:none"><span class="post-meta-item-icon"><i class="fa fa-eye"></i></span> <span class="post-meta-item-text">阅读次数：</span><span id="busuanzi_value_page_pv"></span></span></div></header><div class="post-body" itemprop="articleBody"><h2 id="前言："><a href="#前言：" class="headerlink" title="前言："></a>前言：</h2><ul><li><p>我们知道js对象中可以存储属性和方法，对于存储的属性不只是”键值对”，对象属性实际上还有更加灵活强大的东西</p></li><li><p>下面我们来看一下对象属性到底还有声明nb功能呢？</p></li></ul><h2 id="属性的分类"><a href="#属性的分类" class="headerlink" title="属性的分类"></a>属性的分类</h2><ul><li>对象属性有两种类别</li></ul><ol><li><strong>数据属性</strong>：键值对形式</li><li><strong>访问器属性</strong>：用于获取和设置值的函数</li></ol><h2 id="属性标志和属性描述符"><a href="#属性标志和属性描述符" class="headerlink" title="属性标志和属性描述符"></a>属性标志和属性描述符</h2><ul><li><p>对象属性，除了**<code>value</code>** 外，还有三个特殊的特性（attributes）</p><blockquote><ul><li><strong><code>writable</code></strong> — 如果为 <code>true</code>，则值可以被修改，否则它是只可读的。</li><li><strong><code>enumerable</code></strong> — 如果为 <code>true</code>，则会被在循环中列出，否则不会被列出。</li><li><strong><code>configurable</code></strong> — 如果为 <code>true</code>，则此特性可以被删除，这些属性也可以被修改，否则不可以。</li></ul></blockquote></li><li><p>我们使用“常用的方式”创建的属性都是<code>true</code></p></li></ul><h4 id="如何获取这些标识-特性？"><a href="#如何获取这些标识-特性？" class="headerlink" title="如何获取这些标识/特性？"></a>如何获取这些标识/特性？</h4><ul><li><a target="_blank" rel="noopener" href="https://developer.mozilla.org/zh/docs/Web/JavaScript/Reference/Global_Objects/Object/getOwnPropertyDescriptor">Object.getOwnPropertyDescriptor</a> 方法允许查询有关属性的 <strong>完整</strong> 信息。</li></ul><pre class="language-js"><code class="language-js"><span class="token comment" spellcheck="true">//let descriptor = Object.getOwnPropertyDescriptor(obj, propertyName);</span>
-<span class="token comment" spellcheck="true">//obj : 需要获取信息的对象</span>
-<span class="token comment" spellcheck="true">//propertyName: 属性的名称</span>
-<span class="token comment" spellcheck="true">//返回值: 所谓的“属性描述符对象“ 包含值和所有标志</span>
+})()
+ </script>
+<style>.github-emoji { position: relative; display: inline-block; width: 1.2em; min-height: 1.2em; overflow: hidden; vertical-align: top; color: transparent; }  .github-emoji > span { position: relative; z-index: 10; }  .github-emoji img, .github-emoji .fancybox { margin: 0 !important; padding: 0 !important; border: none !important; outline: none !important; text-decoration: none !important; user-select: none !important; cursor: auto !important; }  .github-emoji img { height: 1.2em !important; width: 1.2em !important; position: absolute !important; left: 50% !important; top: 50% !important; transform: translate(-50%, -50%) !important; user-select: none !important; cursor: auto !important; } .github-emoji-fallback { color: inherit; } .github-emoji-fallback img { opacity: 0 !important; }</style>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">忞月的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://mimyue-hcm.github.io/2020/10/14/dui-xiang-shu-xing-pei-zhi/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="忞月">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="忞月的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          对象属性配置
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-10-14 13:06:27" itemprop="dateCreated datePublished" datetime="2020-10-14T13:06:27+08:00">2020-10-14</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-12-21 09:42:33" itemprop="dateModified" datetime="2020-12-21T09:42:33+08:00">2020-12-21</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JavaScript/" itemprop="url" rel="index"><span itemprop="name">JavaScript</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="前言："><a href="#前言：" class="headerlink" title="前言："></a>前言：</h2><ul>
+<li><p>我们知道js对象中可以存储属性和方法，对于存储的属性不只是”键值对”，对象属性实际上还有更加灵活强大的东西</p>
+</li>
+<li><p>下面我们来看一下对象属性到底还有声明nb功能呢？</p>
+</li>
+</ul>
+<h2 id="属性的分类"><a href="#属性的分类" class="headerlink" title="属性的分类"></a>属性的分类</h2><ul>
+<li>对象属性有两种类别</li>
+</ul>
+<ol>
+<li><strong>数据属性</strong>：键值对形式</li>
+<li><strong>访问器属性</strong>：用于获取和设置值的函数</li>
+</ol>
+<h2 id="属性标志和属性描述符"><a href="#属性标志和属性描述符" class="headerlink" title="属性标志和属性描述符"></a>属性标志和属性描述符</h2><ul>
+<li><p>对象属性，除了**<code>value</code>** 外，还有三个特殊的特性（attributes）</p>
+<blockquote>
+<ul>
+<li><strong><code>writable</code></strong> — 如果为 <code>true</code>，则值可以被修改，否则它是只可读的。</li>
+<li><strong><code>enumerable</code></strong> — 如果为 <code>true</code>，则会被在循环中列出，否则不会被列出。</li>
+<li><strong><code>configurable</code></strong> — 如果为 <code>true</code>，则此特性可以被删除，这些属性也可以被修改，否则不可以。</li>
+</ul>
+</blockquote>
+</li>
+<li><p>我们使用“常用的方式”创建的属性都是<code>true</code></p>
+</li>
+</ul>
+<h4 id="如何获取这些标识-特性？"><a href="#如何获取这些标识-特性？" class="headerlink" title="如何获取这些标识/特性？"></a>如何获取这些标识/特性？</h4><ul>
+<li><a target="_blank" rel="noopener" href="https://developer.mozilla.org/zh/docs/Web/JavaScript/Reference/Global_Objects/Object/getOwnPropertyDescriptor">Object.getOwnPropertyDescriptor</a> 方法允许查询有关属性的 <strong>完整</strong> 信息。</li>
+</ul>
+<pre class="line-numbers language-js" data-language="js"><code class="language-js"><span class="token comment">//let descriptor = Object.getOwnPropertyDescriptor(obj, propertyName);</span>
+<span class="token comment">//obj : 需要获取信息的对象</span>
+<span class="token comment">//propertyName: 属性的名称</span>
+<span class="token comment">//返回值: 所谓的“属性描述符对象“ 包含值和所有标志</span>
 
 <span class="token keyword">let</span> user <span class="token operator">=</span> <span class="token punctuation">{</span>
-  name<span class="token punctuation">:</span> <span class="token string">"John"</span>
+  name<span class="token operator">:</span> <span class="token string">"John"</span>
 <span class="token punctuation">}</span><span class="token punctuation">;</span>
 
 <span class="token keyword">let</span> descriptor <span class="token operator">=</span> Object<span class="token punctuation">.</span><span class="token function">getOwnPropertyDescriptor</span><span class="token punctuation">(</span>user<span class="token punctuation">,</span> <span class="token string">'name'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
 
-<span class="token function">alert</span><span class="token punctuation">(</span> JSON<span class="token punctuation">.</span><span class="token function">stringify</span><span class="token punctuation">(</span>descriptor<span class="token punctuation">,</span> <span class="token keyword">null</span><span class="token punctuation">,</span> <span class="token number">2</span> <span class="token punctuation">)</span> <span class="token punctuation">)</span><span class="token punctuation">;</span>
-<span class="token comment" spellcheck="true">/* 属性描述符：
+<span class="token function">alert</span><span class="token punctuation">(</span> <span class="token constant">JSON</span><span class="token punctuation">.</span><span class="token function">stringify</span><span class="token punctuation">(</span>descriptor<span class="token punctuation">,</span> <span class="token keyword">null</span><span class="token punctuation">,</span> <span class="token number">2</span> <span class="token punctuation">)</span> <span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token comment">/* 属性描述符：
 {
   "value": "John",
   "writable": true,
   "enumerable": true,
   "configurable": true
 }
-*/</span></code></pre><h4 id="如何修改这些标志呢？"><a href="#如何修改这些标志呢？" class="headerlink" title="如何修改这些标志呢？"></a>如何修改这些标志呢？</h4><ul><li>可以使用 <a target="_blank" rel="noopener" href="https://developer.mozilla.org/zh/docs/Web/JavaScript/Reference/Global_Objects/Object/defineProperty">Object.defineProperty</a></li></ul><pre class="language-js"><code class="language-js"><span class="token comment" spellcheck="true">// Object.defineProperty(obj, propertyName, descriptor)</span>
-<span class="token comment" spellcheck="true">// obj, propertyName: 对象及其属性</span>
-<span class="token comment" spellcheck="true">// descriptor: 应用的属性描述符"对象"</span>
+*/</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h4 id="如何修改这些标志呢？"><a href="#如何修改这些标志呢？" class="headerlink" title="如何修改这些标志呢？"></a>如何修改这些标志呢？</h4><ul>
+<li>可以使用 <a target="_blank" rel="noopener" href="https://developer.mozilla.org/zh/docs/Web/JavaScript/Reference/Global_Objects/Object/defineProperty">Object.defineProperty</a></li>
+</ul>
+<pre class="line-numbers language-js" data-language="js"><code class="language-js"><span class="token comment">// Object.defineProperty(obj, propertyName, descriptor)</span>
+<span class="token comment">// obj, propertyName: 对象及其属性</span>
+<span class="token comment">// descriptor: 应用的属性描述符"对象"</span>
 
 <span class="token keyword">let</span> user <span class="token operator">=</span> <span class="token punctuation">{</span><span class="token punctuation">}</span><span class="token punctuation">;</span>
 
 Object<span class="token punctuation">.</span><span class="token function">defineProperty</span><span class="token punctuation">(</span>user<span class="token punctuation">,</span> <span class="token string">"name"</span><span class="token punctuation">,</span> <span class="token punctuation">{</span>
-  value<span class="token punctuation">:</span> <span class="token string">"John"</span>        <span class="token comment" spellcheck="true">//没有对应属性就新建一个对应属性</span>
-  <span class="token comment" spellcheck="true">//其他属性不写默认 false</span>
+  value<span class="token operator">:</span> <span class="token string">"John"</span>		<span class="token comment">//没有对应属性就新建一个对应属性</span>
+  <span class="token comment">//其他属性不写默认 false</span>
 <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
 
 <span class="token keyword">let</span> descriptor <span class="token operator">=</span> Object<span class="token punctuation">.</span><span class="token function">getOwnPropertyDescriptor</span><span class="token punctuation">(</span>user<span class="token punctuation">,</span> <span class="token string">'name'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
 
-<span class="token function">alert</span><span class="token punctuation">(</span> JSON<span class="token punctuation">.</span><span class="token function">stringify</span><span class="token punctuation">(</span>descriptor<span class="token punctuation">,</span> <span class="token keyword">null</span><span class="token punctuation">,</span> <span class="token number">2</span> <span class="token punctuation">)</span> <span class="token punctuation">)</span><span class="token punctuation">;</span>
-<span class="token comment" spellcheck="true">/*
+<span class="token function">alert</span><span class="token punctuation">(</span> <span class="token constant">JSON</span><span class="token punctuation">.</span><span class="token function">stringify</span><span class="token punctuation">(</span>descriptor<span class="token punctuation">,</span> <span class="token keyword">null</span><span class="token punctuation">,</span> <span class="token number">2</span> <span class="token punctuation">)</span> <span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token comment">/*
 {
   "value": "John",
   "writable": false,
   "enumerable": false,
   "configurable": false
 }
- */</span></code></pre><ul><li>补充：<a target="_blank" rel="noopener" href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify">JSON.stringify()</a></li></ul><h4 id="属性描述符的功能"><a href="#属性描述符的功能" class="headerlink" title="属性描述符的功能"></a>属性描述符的功能</h4><h5 id="1-只读writable"><a href="#1-只读writable" class="headerlink" title="1.只读writable"></a>1.只读writable</h5><ul><li>将<code>writable</code> 谁行标志设置为<code>false</code> ，就将对应属性设置为只读属性</li></ul><pre class="language-js"><code class="language-js"><span class="token keyword">let</span> user <span class="token operator">=</span> <span class="token punctuation">{</span>
-    name<span class="token punctuation">:</span> <span class="token string">"minyue"</span>
+ */</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<ul>
+<li>补充：<a target="_blank" rel="noopener" href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify">JSON.stringify()</a></li>
+</ul>
+<h4 id="属性描述符的功能"><a href="#属性描述符的功能" class="headerlink" title="属性描述符的功能"></a>属性描述符的功能</h4><h5 id="1-只读writable"><a href="#1-只读writable" class="headerlink" title="1.只读writable"></a>1.只读writable</h5><ul>
+<li>将<code>writable</code> 谁行标志设置为<code>false</code> ，就将对应属性设置为只读属性</li>
+</ul>
+<pre class="line-numbers language-js" data-language="js"><code class="language-js"><span class="token keyword">let</span> user <span class="token operator">=</span> <span class="token punctuation">{</span>
+    name<span class="token operator">:</span> <span class="token string">"minyue"</span>
 <span class="token punctuation">}</span>
 Object<span class="token punctuation">.</span><span class="token function">defineProperty</span><span class="token punctuation">(</span>user<span class="token punctuation">,</span> <span class="token string">"name"</span><span class="token punctuation">,</span> <span class="token punctuation">{</span>
-    writable<span class="token punctuation">:</span> <span class="token boolean">false</span>
+    writable<span class="token operator">:</span> <span class="token boolean">false</span>
 <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-<span class="token function">alert</span><span class="token punctuation">(</span>user<span class="token punctuation">.</span>name<span class="token punctuation">)</span><span class="token punctuation">;</span>    <span class="token comment" spellcheck="true">//minyue</span>
-user<span class="token punctuation">.</span>name <span class="token operator">=</span> <span class="token string">"hcm"</span><span class="token punctuation">;</span>    <span class="token comment" spellcheck="true">//在严格模式下就会出错，非严格模式忽略</span></code></pre><ul><li>对于一个新属性，我们需要明确列出那些<code>true</code>,未列出的默认<code>false</code></li><li>对于一个常规定义的属性，默认都是<code>true</code>,改什么就变什么</li></ul><h5 id="2-不可枚举enumerable"><a href="#2-不可枚举enumerable" class="headerlink" title="2.不可枚举enumerable"></a>2.不可枚举enumerable</h5><ul><li><p>对象的枚举，我们通过<code>for in</code>语句，是否能枚举对应的<strong>键</strong></p><blockquote><p>通常情况下，对象内置的<code>toString</code> 是不可枚举的，当我们在对象中，创建的属性或者方法，也不想被枚举出就可以设置<code>enumerable:false</code></p></blockquote></li><li><p>同样不可枚举的属性也会被 <a target="_blank" rel="noopener" href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Object/keys">object.keys(obj)</a> (返回键的数组）</p></li></ul><pre class="language-js"><code class="language-js"><span class="token keyword">let</span> user <span class="token operator">=</span> <span class="token punctuation">{</span>
-    name<span class="token punctuation">:</span> <span class="token string">"minyue"</span><span class="token punctuation">,</span>
+<span class="token function">alert</span><span class="token punctuation">(</span>user<span class="token punctuation">.</span>name<span class="token punctuation">)</span><span class="token punctuation">;</span>	<span class="token comment">//minyue</span>
+user<span class="token punctuation">.</span>name <span class="token operator">=</span> <span class="token string">"hcm"</span><span class="token punctuation">;</span>	<span class="token comment">//在严格模式下就会出错，非严格模式忽略</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<ul>
+<li>对于一个新属性，我们需要明确列出那些<code>true</code>,未列出的默认<code>false</code></li>
+<li>对于一个常规定义的属性，默认都是<code>true</code>,改什么就变什么</li>
+</ul>
+<h5 id="2-不可枚举enumerable"><a href="#2-不可枚举enumerable" class="headerlink" title="2.不可枚举enumerable"></a>2.不可枚举enumerable</h5><ul>
+<li><p>对象的枚举，我们通过<code>for  in</code>语句，是否能枚举对应的<strong>键</strong></p>
+<blockquote>
+<p>通常情况下，对象内置的<code>toString</code> 是不可枚举的，当我们在对象中，创建的属性或者方法，也不想被枚举出就可以设置<code>enumerable:false</code></p>
+</blockquote>
+</li>
+<li><p>同样不可枚举的属性也会被<a target="_blank" rel="noopener" href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Object/keys"> object.keys(obj) </a> (返回键的数组）</p>
+</li>
+</ul>
+<pre class="line-numbers language-js" data-language="js"><code class="language-js"><span class="token keyword">let</span> user <span class="token operator">=</span> <span class="token punctuation">{</span>
+    name<span class="token operator">:</span> <span class="token string">"minyue"</span><span class="token punctuation">,</span>
     <span class="token function">toString</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
         <span class="token keyword">return</span> <span class="token keyword">this</span><span class="token punctuation">.</span>name<span class="token punctuation">;</span>
     <span class="token punctuation">}</span>
 <span class="token punctuation">}</span><span class="token punctuation">;</span>
 Object<span class="token punctuation">.</span><span class="token function">defineProperty</span><span class="token punctuation">(</span>user<span class="token punctuation">,</span> <span class="token string">"toString"</span><span class="token punctuation">,</span> <span class="token punctuation">{</span>
-    enumerable<span class="token punctuation">:</span> <span class="token boolean">false</span>
+    enumerable<span class="token operator">:</span> <span class="token boolean">false</span>
 <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-<span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">let</span> key <span class="token keyword">in</span> user<span class="token punctuation">)</span> <span class="token function">alert</span><span class="token punctuation">(</span>key<span class="token punctuation">)</span><span class="token punctuation">;</span>    <span class="token comment" spellcheck="true">//name</span>
-<span class="token function">alert</span><span class="token punctuation">(</span>Object<span class="token punctuation">.</span><span class="token function">keys</span><span class="token punctuation">(</span>user<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>            <span class="token comment" spellcheck="true">//name</span></code></pre><h5 id="3-不可配置"><a href="#3-不可配置" class="headerlink" title="3.不可配置"></a>3.不可配置</h5><ul><li>不可配置<code>configurable:false</code> 有时会预设在内建对象和属性中</li><li>不可配置的属性思想：防止更改属性标志或删除属性标志</li><li>特殊点：不可配置的可写属性是可以修改属性的值的！！！</li></ul><pre class="language-js"><code class="language-js"><span class="token comment" spellcheck="true">//例如：Math.PI 只读，不可枚举，不可配置</span>
+<span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">let</span> key <span class="token keyword">in</span> user<span class="token punctuation">)</span> <span class="token function">alert</span><span class="token punctuation">(</span>key<span class="token punctuation">)</span><span class="token punctuation">;</span>	<span class="token comment">//name</span>
+<span class="token function">alert</span><span class="token punctuation">(</span>Object<span class="token punctuation">.</span><span class="token function">keys</span><span class="token punctuation">(</span>user<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>			<span class="token comment">//name</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h5 id="3-不可配置"><a href="#3-不可配置" class="headerlink" title="3.不可配置"></a>3.不可配置</h5><ul>
+<li>不可配置<code>configurable:false</code> 有时会预设在内建对象和属性中</li>
+<li>不可配置的属性思想：防止更改属性标志或删除属性标志</li>
+<li>特殊点：不可配置的可写属性是可以修改属性的值的！！！</li>
+</ul>
+<pre class="line-numbers language-js" data-language="js"><code class="language-js"><span class="token comment">//例如：Math.PI 只读，不可枚举，不可配置</span>
 <span class="token keyword">let</span> descriptor <span class="token operator">=</span> Object<span class="token punctuation">.</span><span class="token function">getOwnPropertyDescriptor</span><span class="token punctuation">(</span>Math<span class="token punctuation">,</span> <span class="token string">'PI'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
 
-<span class="token function">alert</span><span class="token punctuation">(</span> JSON<span class="token punctuation">.</span><span class="token function">stringify</span><span class="token punctuation">(</span>descriptor<span class="token punctuation">,</span> <span class="token keyword">null</span><span class="token punctuation">,</span> <span class="token number">2</span> <span class="token punctuation">)</span> <span class="token punctuation">)</span><span class="token punctuation">;</span>
-<span class="token comment" spellcheck="true">/*
+<span class="token function">alert</span><span class="token punctuation">(</span> <span class="token constant">JSON</span><span class="token punctuation">.</span><span class="token function">stringify</span><span class="token punctuation">(</span>descriptor<span class="token punctuation">,</span> <span class="token keyword">null</span><span class="token punctuation">,</span> <span class="token number">2</span> <span class="token punctuation">)</span> <span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token comment">/*
 {
   "value": 3.141592653589793,
   "writable": false,
@@ -79,54 +504,82 @@ Object<span class="token punctuation">.</span><span class="token function">defin
   "configurable": false
 }
 */</span>
-Math<span class="token punctuation">.</span>PI <span class="token operator">=</span> <span class="token number">3</span><span class="token punctuation">;</span> <span class="token comment" spellcheck="true">// Error</span></code></pre><h4 id="批量获取-修改属性标志符"><a href="#批量获取-修改属性标志符" class="headerlink" title="批量获取/修改属性标志符"></a>批量获取/修改属性标志符</h4><ul><li><h5 id="Object-defineProperties"><a href="#Object-defineProperties" class="headerlink" title="Object.defineProperties"></a>Object.defineProperties</h5></li><li><h5 id="Object-getOwnPropertyDescriptors"><a href="#Object-getOwnPropertyDescriptors" class="headerlink" title="Object.getOwnPropertyDescriptors"></a>Object.getOwnPropertyDescriptors</h5></li></ul><pre class="language-js"><code class="language-js">Object<span class="token punctuation">.</span><span class="token function">defineProperties</span><span class="token punctuation">(</span>user<span class="token punctuation">,</span> <span class="token punctuation">{</span>
-  name<span class="token punctuation">:</span> <span class="token punctuation">{</span> value<span class="token punctuation">:</span> <span class="token string">"John"</span><span class="token punctuation">,</span> writable<span class="token punctuation">:</span> <span class="token boolean">false</span> <span class="token punctuation">}</span><span class="token punctuation">,</span>
-  surname<span class="token punctuation">:</span> <span class="token punctuation">{</span> value<span class="token punctuation">:</span> <span class="token string">"Smith"</span><span class="token punctuation">,</span> writable<span class="token punctuation">:</span> <span class="token boolean">false</span> <span class="token punctuation">}</span><span class="token punctuation">,</span>
-  <span class="token comment" spellcheck="true">// ...</span>
+Math<span class="token punctuation">.</span><span class="token constant">PI</span> <span class="token operator">=</span> <span class="token number">3</span><span class="token punctuation">;</span> <span class="token comment">// Error</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h4 id="批量获取-修改属性标志符"><a href="#批量获取-修改属性标志符" class="headerlink" title="批量获取/修改属性标志符"></a>批量获取/修改属性标志符</h4><ul>
+<li><h5 id="Object-defineProperties"><a href="#Object-defineProperties" class="headerlink" title="Object.defineProperties"></a>Object.defineProperties</h5></li>
+<li><h5 id="Object-getOwnPropertyDescriptors"><a href="#Object-getOwnPropertyDescriptors" class="headerlink" title="Object.getOwnPropertyDescriptors"></a>Object.getOwnPropertyDescriptors</h5></li>
+</ul>
+<pre class="line-numbers language-js" data-language="js"><code class="language-js">Object<span class="token punctuation">.</span><span class="token function">defineProperties</span><span class="token punctuation">(</span>user<span class="token punctuation">,</span> <span class="token punctuation">{</span>
+  name<span class="token operator">:</span> <span class="token punctuation">{</span> value<span class="token operator">:</span> <span class="token string">"John"</span><span class="token punctuation">,</span> writable<span class="token operator">:</span> <span class="token boolean">false</span> <span class="token punctuation">}</span><span class="token punctuation">,</span>
+  surname<span class="token operator">:</span> <span class="token punctuation">{</span> value<span class="token operator">:</span> <span class="token string">"Smith"</span><span class="token punctuation">,</span> writable<span class="token operator">:</span> <span class="token boolean">false</span> <span class="token punctuation">}</span><span class="token punctuation">,</span>
+  <span class="token comment">// ...</span>
 <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
 
-<span class="token comment" spellcheck="true">//克隆对象:首选方法，不只是值，还有属性描述符等</span>
-<span class="token keyword">let</span> clone <span class="token operator">=</span> Object<span class="token punctuation">.</span><span class="token function">defineProperties</span><span class="token punctuation">(</span><span class="token punctuation">{</span><span class="token punctuation">}</span><span class="token punctuation">,</span> Object<span class="token punctuation">.</span><span class="token function">getOwnPropertyDescriptors</span><span class="token punctuation">(</span>obj<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span></code></pre><p>扩展：学到这里，我们知道，属性描述符都是单一属性级别上的工作，要想限制访问整个对象，<a target="_blank" rel="noopener" href="https://zh.javascript.info/property-descriptors#she-ding-yi-ge-quan-ju-de-mi-feng-dui-xiang">参考</a></p><h2 id="属性的getter和setter"><a href="#属性的getter和setter" class="headerlink" title="属性的getter和setter"></a>属性的getter和setter</h2><h4 id="getter和setter"><a href="#getter和setter" class="headerlink" title="getter和setter"></a>getter和setter</h4><ul><li>看完<strong>数据属性</strong>，下面我们来看一下<strong>访问器属性</strong></li><li>访问器属性：本质上是用于获取和设置值的函数</li></ul><p>访问器属性由 “getter” 和 “setter” 方法表示。在对象字面量中，它们用 <code>get</code> 和 <code>set</code> 表示：</p><pre class="language-js"><code class="language-js"><span class="token keyword">let</span> user <span class="token operator">=</span> <span class="token punctuation">{</span>
-  name<span class="token punctuation">:</span> <span class="token string">"John"</span><span class="token punctuation">,</span>
-  surname<span class="token punctuation">:</span> <span class="token string">"Smith"</span><span class="token punctuation">,</span>
+<span class="token comment">//克隆对象:首选方法，不只是值，还有属性描述符等</span>
+<span class="token keyword">let</span> clone <span class="token operator">=</span> Object<span class="token punctuation">.</span><span class="token function">defineProperties</span><span class="token punctuation">(</span><span class="token punctuation">{</span><span class="token punctuation">}</span><span class="token punctuation">,</span> Object<span class="token punctuation">.</span><span class="token function">getOwnPropertyDescriptors</span><span class="token punctuation">(</span>obj<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>扩展：学到这里，我们知道，属性描述符都是单一属性级别上的工作，要想限制访问整个对象，<a target="_blank" rel="noopener" href="https://zh.javascript.info/property-descriptors#she-ding-yi-ge-quan-ju-de-mi-feng-dui-xiang">参考</a></p>
+<h2 id="属性的getter和setter"><a href="#属性的getter和setter" class="headerlink" title="属性的getter和setter"></a>属性的getter和setter</h2><h4 id="getter和setter"><a href="#getter和setter" class="headerlink" title="getter和setter"></a>getter和setter</h4><ul>
+<li>看完<strong>数据属性</strong>，下面我们来看一下<strong>访问器属性</strong></li>
+<li>访问器属性：本质上是用于获取和设置值的函数</li>
+</ul>
+<p>访问器属性由 “getter” 和 “setter” 方法表示。在对象字面量中，它们用 <code>get</code> 和 <code>set</code> 表示：</p>
+<pre class="line-numbers language-js" data-language="js"><code class="language-js"><span class="token keyword">let</span> user <span class="token operator">=</span> <span class="token punctuation">{</span>
+  name<span class="token operator">:</span> <span class="token string">"John"</span><span class="token punctuation">,</span>
+  surname<span class="token operator">:</span> <span class="token string">"Smith"</span><span class="token punctuation">,</span>
 
   <span class="token keyword">get</span> <span class="token function">fullName</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
-      <span class="token comment" spellcheck="true">// 当读取 obj.propName 时，getter 起作用</span>
-      <span class="token keyword">return</span> <span class="token template-string"><span class="token string">`</span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">${</span><span class="token keyword">this</span><span class="token punctuation">.</span>name<span class="token interpolation-punctuation punctuation">}</span></span><span class="token string"> </span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">${</span><span class="token keyword">this</span><span class="token punctuation">.</span>surname<span class="token interpolation-punctuation punctuation">}</span></span><span class="token string">`</span></span><span class="token punctuation">;</span>
+      <span class="token comment">// 当读取 obj.propName 时，getter 起作用</span>
+      <span class="token keyword">return</span> <span class="token template-string"><span class="token template-punctuation string">`</span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">${</span><span class="token keyword">this</span><span class="token punctuation">.</span>name<span class="token interpolation-punctuation punctuation">}</span></span><span class="token string"> </span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">${</span><span class="token keyword">this</span><span class="token punctuation">.</span>surname<span class="token interpolation-punctuation punctuation">}</span></span><span class="token template-punctuation string">`</span></span><span class="token punctuation">;</span>
   <span class="token punctuation">}</span><span class="token punctuation">,</span>
 
-  <span class="token keyword">set</span> <span class="token function">fullName</span><span class="token punctuation">(</span>value<span class="token punctuation">)</span> <span class="token punctuation">{</span>
-      <span class="token comment" spellcheck="true">// 当执行 obj.propName = value 操作时，setter 起作用</span>
+  <span class="token keyword">set</span> <span class="token function">fullName</span><span class="token punctuation">(</span><span class="token parameter">value</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token comment">// 当执行 obj.propName = value 操作时，setter 起作用</span>
       <span class="token punctuation">[</span><span class="token keyword">this</span><span class="token punctuation">.</span>name<span class="token punctuation">,</span> <span class="token keyword">this</span><span class="token punctuation">.</span>surname<span class="token punctuation">]</span> <span class="token operator">=</span> value<span class="token punctuation">.</span><span class="token function">split</span><span class="token punctuation">(</span><span class="token string">" "</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
   <span class="token punctuation">}</span>
 <span class="token punctuation">}</span><span class="token punctuation">;</span>
 
-user<span class="token punctuation">.</span>fullName <span class="token operator">=</span> <span class="token string">"Alice Cooper"</span><span class="token punctuation">;</span>        <span class="token comment" spellcheck="true">// 调用setter</span>
-<span class="token function">alert</span><span class="token punctuation">(</span>user<span class="token punctuation">.</span>fullname<span class="token punctuation">)</span><span class="token punctuation">;</span>                 <span class="token comment" spellcheck="true">// Alice Cooper</span>
-<span class="token function">alert</span><span class="token punctuation">(</span>user<span class="token punctuation">.</span>surname<span class="token punctuation">)</span><span class="token punctuation">;</span>                 <span class="token comment" spellcheck="true">// Cooper</span></code></pre><h4 id="访问器描述符"><a href="#访问器描述符" class="headerlink" title="访问器描述符"></a>访问器描述符</h4><ul><li><strong><code>get</code></strong> —— 一个没有参数的函数，在读取属性时工作，</li><li><strong><code>set</code></strong> —— 带有一个参数的函数，当属性被设置时调用，</li><li><strong><code>enumerable</code></strong> —— 与数据属性的相同，</li><li><strong><code>configurable</code></strong> —— 与数据属性的相同。</li></ul><p>使用 <code>defineProperty</code> 创建一个 <code>fullName</code> 访问器</p><pre class="language-js"><code class="language-js"><span class="token keyword">let</span> user <span class="token operator">=</span> <span class="token punctuation">{</span>
-  name<span class="token punctuation">:</span> <span class="token string">"John"</span><span class="token punctuation">,</span>
-  surname<span class="token punctuation">:</span> <span class="token string">"Smith"</span>
+user<span class="token punctuation">.</span>fullName <span class="token operator">=</span> <span class="token string">"Alice Cooper"</span><span class="token punctuation">;</span>		<span class="token comment">// 调用setter</span>
+<span class="token function">alert</span><span class="token punctuation">(</span>user<span class="token punctuation">.</span>fullname<span class="token punctuation">)</span><span class="token punctuation">;</span> 				<span class="token comment">// Alice Cooper</span>
+<span class="token function">alert</span><span class="token punctuation">(</span>user<span class="token punctuation">.</span>surname<span class="token punctuation">)</span><span class="token punctuation">;</span> 				<span class="token comment">// Cooper</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h4 id="访问器描述符"><a href="#访问器描述符" class="headerlink" title="访问器描述符"></a>访问器描述符</h4><ul>
+<li><strong><code>get</code></strong> —— 一个没有参数的函数，在读取属性时工作，</li>
+<li><strong><code>set</code></strong> —— 带有一个参数的函数，当属性被设置时调用，</li>
+<li><strong><code>enumerable</code></strong> —— 与数据属性的相同，</li>
+<li><strong><code>configurable</code></strong> —— 与数据属性的相同。</li>
+</ul>
+<p>使用 <code>defineProperty</code> 创建一个 <code>fullName</code> 访问器</p>
+<pre class="line-numbers language-js" data-language="js"><code class="language-js"><span class="token keyword">let</span> user <span class="token operator">=</span> <span class="token punctuation">{</span>
+  name<span class="token operator">:</span> <span class="token string">"John"</span><span class="token punctuation">,</span>
+  surname<span class="token operator">:</span> <span class="token string">"Smith"</span>
 <span class="token punctuation">}</span><span class="token punctuation">;</span>
 
 Object<span class="token punctuation">.</span><span class="token function">defineProperty</span><span class="token punctuation">(</span>user<span class="token punctuation">,</span> <span class="token string">'fullName'</span><span class="token punctuation">,</span> <span class="token punctuation">{</span>
-  <span class="token keyword">get</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
-    <span class="token keyword">return</span> <span class="token template-string"><span class="token string">`</span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">${</span><span class="token keyword">this</span><span class="token punctuation">.</span>name<span class="token interpolation-punctuation punctuation">}</span></span><span class="token string"> </span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">${</span><span class="token keyword">this</span><span class="token punctuation">.</span>surname<span class="token interpolation-punctuation punctuation">}</span></span><span class="token string">`</span></span><span class="token punctuation">;</span>
+  <span class="token function">get</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">return</span> <span class="token template-string"><span class="token template-punctuation string">`</span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">${</span><span class="token keyword">this</span><span class="token punctuation">.</span>name<span class="token interpolation-punctuation punctuation">}</span></span><span class="token string"> </span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">${</span><span class="token keyword">this</span><span class="token punctuation">.</span>surname<span class="token interpolation-punctuation punctuation">}</span></span><span class="token template-punctuation string">`</span></span><span class="token punctuation">;</span>
   <span class="token punctuation">}</span><span class="token punctuation">,</span>
 
-  <span class="token keyword">set</span><span class="token punctuation">(</span>value<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token function">set</span><span class="token punctuation">(</span>value<span class="token punctuation">)</span> <span class="token punctuation">{</span>
     <span class="token punctuation">[</span><span class="token keyword">this</span><span class="token punctuation">.</span>name<span class="token punctuation">,</span> <span class="token keyword">this</span><span class="token punctuation">.</span>surname<span class="token punctuation">]</span> <span class="token operator">=</span> value<span class="token punctuation">.</span><span class="token function">split</span><span class="token punctuation">(</span><span class="token string">" "</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
   <span class="token punctuation">}</span>
 <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
 
-<span class="token function">alert</span><span class="token punctuation">(</span>user<span class="token punctuation">.</span>fullName<span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment" spellcheck="true">// John Smith</span>
+<span class="token function">alert</span><span class="token punctuation">(</span>user<span class="token punctuation">.</span>fullName<span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">// John Smith</span>
 
-<span class="token keyword">for</span><span class="token punctuation">(</span><span class="token keyword">let</span> key <span class="token keyword">in</span> user<span class="token punctuation">)</span> <span class="token function">alert</span><span class="token punctuation">(</span>key<span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment" spellcheck="true">// name, surname</span></code></pre><h4 id="巧妙的getter和setter"><a href="#巧妙的getter和setter" class="headerlink" title="巧妙的getter和setter"></a>巧妙的getter和setter</h4><ul><li>Getter/setter 可以用作“真实”属性值的包装器，以便对它们进行更多的控制。</li></ul><pre class="language-js"><code class="language-js"><span class="token comment" spellcheck="true">//例如：当我们需要输入用户名不能太短时</span>
+<span class="token keyword">for</span><span class="token punctuation">(</span><span class="token keyword">let</span> key <span class="token keyword">in</span> user<span class="token punctuation">)</span> <span class="token function">alert</span><span class="token punctuation">(</span>key<span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">// name, surname</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h4 id="巧妙的getter和setter"><a href="#巧妙的getter和setter" class="headerlink" title="巧妙的getter和setter"></a>巧妙的getter和setter</h4><ul>
+<li>Getter/setter 可以用作“真实”属性值的包装器，以便对它们进行更多的控制。</li>
+</ul>
+<pre class="line-numbers language-js" data-language="js"><code class="language-js"><span class="token comment">//例如：当我们需要输入用户名不能太短时</span>
 <span class="token keyword">let</span> user <span class="token operator">=</span> <span class="token punctuation">{</span>
   <span class="token keyword">get</span> <span class="token function">name</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
     <span class="token keyword">return</span> <span class="token keyword">this</span><span class="token punctuation">.</span>_name<span class="token punctuation">;</span>
   <span class="token punctuation">}</span><span class="token punctuation">,</span>
 
-  <span class="token keyword">set</span> <span class="token function">name</span><span class="token punctuation">(</span>value<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token keyword">set</span> <span class="token function">name</span><span class="token punctuation">(</span><span class="token parameter">value</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
     <span class="token keyword">if</span> <span class="token punctuation">(</span>value<span class="token punctuation">.</span>length <span class="token operator">&lt;</span> <span class="token number">4</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
       <span class="token function">alert</span><span class="token punctuation">(</span><span class="token string">"Name is too short, need at least 4 characters"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
       <span class="token keyword">return</span><span class="token punctuation">;</span>
@@ -136,18 +589,26 @@ Object<span class="token punctuation">.</span><span class="token function">defin
 <span class="token punctuation">}</span><span class="token punctuation">;</span>
 
 user<span class="token punctuation">.</span>name <span class="token operator">=</span> <span class="token string">"Pete"</span><span class="token punctuation">;</span>
-<span class="token function">alert</span><span class="token punctuation">(</span>user<span class="token punctuation">.</span>name<span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment" spellcheck="true">// Pete</span>
+<span class="token function">alert</span><span class="token punctuation">(</span>user<span class="token punctuation">.</span>name<span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">// Pete</span>
 
-user<span class="token punctuation">.</span>name <span class="token operator">=</span> <span class="token string">""</span><span class="token punctuation">;</span> <span class="token comment" spellcheck="true">// Name 太短了……</span></code></pre><ul><li>访问器属性本身就是两个函数，没有值，存值一般会有一个内部数据属性存值！！（例如这里的<code>_name</code>)</li></ul><h4 id="访问器属性实例"><a href="#访问器属性实例" class="headerlink" title="访问器属性实例"></a>访问器属性实例</h4><ul><li>访问器的一大用途是，它们允许随时通过使用 getter 和 setter 替换“正常的”数据属性，来控制和调整这些属性的行为。</li></ul><pre class="language-js"><code class="language-js"><span class="token comment" spellcheck="true">// 对于年龄这样的变化数据，我们希望存储birthday而不是age</span>
-<span class="token comment" spellcheck="true">// 这里我们就可以使用访问器属性，动态获取修改对象的age属性</span>
+user<span class="token punctuation">.</span>name <span class="token operator">=</span> <span class="token string">""</span><span class="token punctuation">;</span> <span class="token comment">// Name 太短了……</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 
-<span class="token keyword">function</span> <span class="token function">User</span><span class="token punctuation">(</span>name<span class="token punctuation">,</span> birthday<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+<ul>
+<li>访问器属性本身就是两个函数，没有值，存值一般会有一个内部数据属性存值！！（例如这里的<code>_name</code>)</li>
+</ul>
+<h4 id="访问器属性实例"><a href="#访问器属性实例" class="headerlink" title="访问器属性实例"></a>访问器属性实例</h4><ul>
+<li>访问器的一大用途是，它们允许随时通过使用 getter 和 setter 替换“正常的”数据属性，来控制和调整这些属性的行为。</li>
+</ul>
+<pre class="line-numbers language-js" data-language="js"><code class="language-js"><span class="token comment">// 对于年龄这样的变化数据，我们希望存储birthday而不是age</span>
+<span class="token comment">// 这里我们就可以使用访问器属性，动态获取修改对象的age属性</span>
+
+<span class="token keyword">function</span> <span class="token function">User</span><span class="token punctuation">(</span><span class="token parameter">name<span class="token punctuation">,</span> birthday</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
   <span class="token keyword">this</span><span class="token punctuation">.</span>name <span class="token operator">=</span> name<span class="token punctuation">;</span>
   <span class="token keyword">this</span><span class="token punctuation">.</span>birthday <span class="token operator">=</span> birthday<span class="token punctuation">;</span>
 
-  <span class="token comment" spellcheck="true">// 年龄是根据当前日期和生日计算得出的</span>
+  <span class="token comment">// 年龄是根据当前日期和生日计算得出的</span>
   Object<span class="token punctuation">.</span><span class="token function">defineProperty</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">,</span> <span class="token string">"age"</span><span class="token punctuation">,</span> <span class="token punctuation">{</span>
-    <span class="token keyword">get</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token function">get</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
       <span class="token keyword">let</span> todayYear <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">Date</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">getFullYear</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
       <span class="token keyword">return</span> todayYear <span class="token operator">-</span> <span class="token keyword">this</span><span class="token punctuation">.</span>birthday<span class="token punctuation">.</span><span class="token function">getFullYear</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
     <span class="token punctuation">}</span>
@@ -156,8 +617,63 @@ user<span class="token punctuation">.</span>name <span class="token operator">=<
 
 <span class="token keyword">let</span> john <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">User</span><span class="token punctuation">(</span><span class="token string">"John"</span><span class="token punctuation">,</span> <span class="token keyword">new</span> <span class="token class-name">Date</span><span class="token punctuation">(</span><span class="token number">1999</span><span class="token punctuation">,</span> <span class="token number">10</span><span class="token punctuation">,</span> <span class="token number">29</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
 
-<span class="token function">alert</span><span class="token punctuation">(</span> john<span class="token punctuation">.</span>birthday <span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment" spellcheck="true">// Mon Nov 29 1999 00:00:00 GMT+0800 (中国标准时间)</span>
-<span class="token function">alert</span><span class="token punctuation">(</span> john<span class="token punctuation">.</span>age <span class="token punctuation">)</span><span class="token punctuation">;</span>      <span class="token comment" spellcheck="true">// 21</span></code></pre></div><footer class="post-footer"><div class="post-tags"><a href="/tags/js%E5%9F%BA%E7%A1%80/" rel="tag"><i class="fa fa-tag"></i> js基础</a></div><div class="post-nav"><div class="post-nav-item"><a href="/2020/10/13/promise-hui-diao/" rel="prev" title="Promise回调"><i class="fa fa-chevron-left"></i> Promise回调</a></div><div class="post-nav-item"><a href="/2020/10/19/react-guan-fang-wen-dang-ru-men-xue-xi/" rel="next" title="React官方文档入门学习">React官方文档入门学习<i class="fa fa-chevron-right"></i></a></div></div></footer></article></div><script>window.addEventListener('tabs:register', () => {
+<span class="token function">alert</span><span class="token punctuation">(</span> john<span class="token punctuation">.</span>birthday <span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">// Mon Nov 29 1999 00:00:00 GMT+0800 (中国标准时间)</span>
+<span class="token function">alert</span><span class="token punctuation">(</span> john<span class="token punctuation">.</span>age <span class="token punctuation">)</span><span class="token punctuation">;</span>      <span class="token comment">// 21</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/js%E5%9F%BA%E7%A1%80/" rel="tag"><i class="fa fa-tag"></i> js基础</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/10/13/promise-hui-diao/" rel="prev" title="Promise回调">
+      <i class="fa fa-chevron-left"></i> Promise回调
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/10/19/react-guan-fang-wen-dang-ru-men-xue-xi/" rel="next" title="React官方文档入门学习">
+      React官方文档入门学习 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
     let { activeClass } = CONFIG.comments;
     if (CONFIG.comments.storage) {
       activeClass = localStorage.getItem('comments_active') || activeClass;
@@ -175,4 +691,174 @@ user<span class="token punctuation">.</span>name <span class="token operator">=<
       let commentClass = event.target.classList[1];
       localStorage.setItem('comments_active', commentClass);
     });
-  }</script></div><div class="toggle sidebar-toggle"><span class="toggle-line toggle-line-first"></span><span class="toggle-line toggle-line-middle"></span><span class="toggle-line toggle-line-last"></span></div><aside class="sidebar"><div class="sidebar-inner"><ul class="sidebar-nav motion-element"><li class="sidebar-nav-toc">文章目录</li><li class="sidebar-nav-overview">站点概览</li></ul><div class="post-toc-wrap sidebar-panel"><div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%89%8D%E8%A8%80%EF%BC%9A"><span class="nav-number">1.</span> <span class="nav-text">前言：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B1%9E%E6%80%A7%E7%9A%84%E5%88%86%E7%B1%BB"><span class="nav-number">2.</span> <span class="nav-text">属性的分类</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B1%9E%E6%80%A7%E6%A0%87%E5%BF%97%E5%92%8C%E5%B1%9E%E6%80%A7%E6%8F%8F%E8%BF%B0%E7%AC%A6"><span class="nav-number">3.</span> <span class="nav-text">属性标志和属性描述符</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E8%8E%B7%E5%8F%96%E8%BF%99%E4%BA%9B%E6%A0%87%E8%AF%86-%E7%89%B9%E6%80%A7%EF%BC%9F"><span class="nav-number">3.0.1.</span> <span class="nav-text">如何获取这些标识&#x2F;特性？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E4%BF%AE%E6%94%B9%E8%BF%99%E4%BA%9B%E6%A0%87%E5%BF%97%E5%91%A2%EF%BC%9F"><span class="nav-number">3.0.2.</span> <span class="nav-text">如何修改这些标志呢？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B1%9E%E6%80%A7%E6%8F%8F%E8%BF%B0%E7%AC%A6%E7%9A%84%E5%8A%9F%E8%83%BD"><span class="nav-number">3.0.3.</span> <span class="nav-text">属性描述符的功能</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-%E5%8F%AA%E8%AF%BBwritable"><span class="nav-number">3.0.3.1.</span> <span class="nav-text">1.只读writable</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-%E4%B8%8D%E5%8F%AF%E6%9E%9A%E4%B8%BEenumerable"><span class="nav-number">3.0.3.2.</span> <span class="nav-text">2.不可枚举enumerable</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-%E4%B8%8D%E5%8F%AF%E9%85%8D%E7%BD%AE"><span class="nav-number">3.0.3.3.</span> <span class="nav-text">3.不可配置</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%89%B9%E9%87%8F%E8%8E%B7%E5%8F%96-%E4%BF%AE%E6%94%B9%E5%B1%9E%E6%80%A7%E6%A0%87%E5%BF%97%E7%AC%A6"><span class="nav-number">3.0.4.</span> <span class="nav-text">批量获取&#x2F;修改属性标志符</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Object-defineProperties"><span class="nav-number">3.0.4.1.</span> <span class="nav-text">Object.defineProperties</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Object-getOwnPropertyDescriptors"><span class="nav-number">3.0.4.2.</span> <span class="nav-text">Object.getOwnPropertyDescriptors</span></a></li></ol></li></ol></li></ol><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B1%9E%E6%80%A7%E7%9A%84getter%E5%92%8Csetter"><span class="nav-number">4.</span> <span class="nav-text">属性的getter和setter</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#getter%E5%92%8Csetter"><span class="nav-number">4.0.1.</span> <span class="nav-text">getter和setter</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AE%BF%E9%97%AE%E5%99%A8%E6%8F%8F%E8%BF%B0%E7%AC%A6"><span class="nav-number">4.0.2.</span> <span class="nav-text">访问器描述符</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B7%A7%E5%A6%99%E7%9A%84getter%E5%92%8Csetter"><span class="nav-number">4.0.3.</span> <span class="nav-text">巧妙的getter和setter</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AE%BF%E9%97%AE%E5%99%A8%E5%B1%9E%E6%80%A7%E5%AE%9E%E4%BE%8B"><span class="nav-number">4.0.4.</span> <span class="nav-text">访问器属性实例</span></a></li></ol></li></div></div><div class="site-overview-wrap sidebar-panel"><div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person"><p class="site-author-name" itemprop="name">忞月</p><div class="site-description" itemprop="description"></div></div><div class="site-state-wrap motion-element"><nav class="site-state"><div class="site-state-item site-state-posts"><a href="/archives/"><span class="site-state-item-count">26</span> <span class="site-state-item-name">日志</span></a></div><div class="site-state-item site-state-categories"><a href="/categories/"><span class="site-state-item-count">7</span> <span class="site-state-item-name">分类</span></a></div><div class="site-state-item site-state-tags"><a href="/tags/"><span class="site-state-item-count">21</span> <span class="site-state-item-name">标签</span></a></div></nav></div></div></div></aside><div id="sidebar-dimmer"></div></div></main><footer class="footer"><div class="footer-inner"><div class="copyright">&copy; <span itemprop="copyrightYear">2021</span><span class="with-love"><i class="fa fa-heart"></i></span> <span class="author" itemprop="copyrightHolder">忞月</span></div><div class="busuanzi-count"><script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><span class="post-meta-item" id="busuanzi_container_site_uv" style="display:none"><span class="post-meta-item-icon"><i class="fa fa-user"></i></span><span class="site-uv" title="总访客量"><span id="busuanzi_value_site_uv"></span></span></span> <span class="post-meta-divider">|</span><span class="post-meta-item" id="busuanzi_container_site_pv" style="display:none"><span class="post-meta-item-icon"><i class="fa fa-eye"></i></span><span class="site-pv" title="总访问量"><span id="busuanzi_value_site_pv"></span></span></span></div></div></footer></div><script src="/lib/anime.min.js"></script><script src="/lib/velocity/velocity.min.js"></script><script src="/lib/velocity/velocity.ui.min.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script><script src="/js/local-search.js"></script><script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({pluginRootPath:"live2dw/",pluginJsPath:"lib/",pluginModelPath:"assets/",tagMode:!1,log:!1,model:{jsonPath:"live2d-widget-model-<Epsilon2.1>"},display:{position:"right",width:150,height:300},mobile:{show:!0}})</script><script>window.imageLazyLoadSetting={isSPA:!1,processImages:null}</script><script>window.addEventListener("load",function(){var t=/\.(gif|jpg|jpeg|tiff|png)$/i,r=/^data:image\/[a-z]+;base64,/;Array.prototype.slice.call(document.querySelectorAll("img[data-original]")).forEach(function(a){var e=a.parentNode;"A"===e.tagName&&(e.href.match(t)||e.href.match(r))&&(e.href=a.dataset.original)})})</script><script>!function(n){n.imageLazyLoadSetting.processImages=i;var e=n.imageLazyLoadSetting.isSPA,r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]"));function i(){e&&(r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]")));for(var t,a=0;a<r.length;a++)0<=(t=(t=r[a]).getBoundingClientRect()).bottom&&0<=t.left&&t.top<=(n.innerHeight||document.documentElement.clientHeight)&&function(){var t,e,n,i,o=r[a];t=o,e=function(){r=r.filter(function(t){return o!==t})},n=new Image,i=t.getAttribute("data-original"),n.onload=function(){t.src=i,e()},n.src=i}()}i(),n.addEventListener("scroll",function(){var t,e;t=i,e=n,clearTimeout(t.tId),t.tId=setTimeout(function(){t.call(e)},500)})}(this)</script></body></html>
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%89%8D%E8%A8%80%EF%BC%9A"><span class="nav-number">1.</span> <span class="nav-text">前言：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B1%9E%E6%80%A7%E7%9A%84%E5%88%86%E7%B1%BB"><span class="nav-number">2.</span> <span class="nav-text">属性的分类</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B1%9E%E6%80%A7%E6%A0%87%E5%BF%97%E5%92%8C%E5%B1%9E%E6%80%A7%E6%8F%8F%E8%BF%B0%E7%AC%A6"><span class="nav-number">3.</span> <span class="nav-text">属性标志和属性描述符</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E8%8E%B7%E5%8F%96%E8%BF%99%E4%BA%9B%E6%A0%87%E8%AF%86-%E7%89%B9%E6%80%A7%EF%BC%9F"><span class="nav-number">3.0.1.</span> <span class="nav-text">如何获取这些标识&#x2F;特性？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E4%BF%AE%E6%94%B9%E8%BF%99%E4%BA%9B%E6%A0%87%E5%BF%97%E5%91%A2%EF%BC%9F"><span class="nav-number">3.0.2.</span> <span class="nav-text">如何修改这些标志呢？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B1%9E%E6%80%A7%E6%8F%8F%E8%BF%B0%E7%AC%A6%E7%9A%84%E5%8A%9F%E8%83%BD"><span class="nav-number">3.0.3.</span> <span class="nav-text">属性描述符的功能</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-%E5%8F%AA%E8%AF%BBwritable"><span class="nav-number">3.0.3.1.</span> <span class="nav-text">1.只读writable</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-%E4%B8%8D%E5%8F%AF%E6%9E%9A%E4%B8%BEenumerable"><span class="nav-number">3.0.3.2.</span> <span class="nav-text">2.不可枚举enumerable</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-%E4%B8%8D%E5%8F%AF%E9%85%8D%E7%BD%AE"><span class="nav-number">3.0.3.3.</span> <span class="nav-text">3.不可配置</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%89%B9%E9%87%8F%E8%8E%B7%E5%8F%96-%E4%BF%AE%E6%94%B9%E5%B1%9E%E6%80%A7%E6%A0%87%E5%BF%97%E7%AC%A6"><span class="nav-number">3.0.4.</span> <span class="nav-text">批量获取&#x2F;修改属性标志符</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Object-defineProperties"><span class="nav-number">3.0.4.1.</span> <span class="nav-text">Object.defineProperties</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Object-getOwnPropertyDescriptors"><span class="nav-number">3.0.4.2.</span> <span class="nav-text">Object.getOwnPropertyDescriptors</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B1%9E%E6%80%A7%E7%9A%84getter%E5%92%8Csetter"><span class="nav-number">4.</span> <span class="nav-text">属性的getter和setter</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#getter%E5%92%8Csetter"><span class="nav-number">4.0.1.</span> <span class="nav-text">getter和setter</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AE%BF%E9%97%AE%E5%99%A8%E6%8F%8F%E8%BF%B0%E7%AC%A6"><span class="nav-number">4.0.2.</span> <span class="nav-text">访问器描述符</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B7%A7%E5%A6%99%E7%9A%84getter%E5%92%8Csetter"><span class="nav-number">4.0.3.</span> <span class="nav-text">巧妙的getter和setter</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AE%BF%E9%97%AE%E5%99%A8%E5%B1%9E%E6%80%A7%E5%AE%9E%E4%BE%8B"><span class="nav-number">4.0.4.</span> <span class="nav-text">访问器属性实例</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">忞月</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">26</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">21</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">忞月</span>
+</div>
+<!--隐藏底部 powered By Hexo / 强力驱动
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+-->
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+<script>
+            window.imageLazyLoadSetting = {
+                isSPA: false,
+                processImages: null,
+            };
+        </script><script>window.addEventListener("load",function(){var t=/\.(gif|jpg|jpeg|tiff|png)$/i,r=/^data:image\/[a-z]+;base64,/;Array.prototype.slice.call(document.querySelectorAll("img[data-original]")).forEach(function(a){var e=a.parentNode;"A"===e.tagName&&(e.href.match(t)||e.href.match(r))&&(e.href=a.dataset.original)})});</script><script>!function(n){n.imageLazyLoadSetting.processImages=i;var e=n.imageLazyLoadSetting.isSPA,r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]"));function i(){e&&(r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]")));for(var t,a=0;a<r.length;a++)0<=(t=(t=r[a]).getBoundingClientRect()).bottom&&0<=t.left&&t.top<=(n.innerHeight||document.documentElement.clientHeight)&&function(){var t,e,n,i,o=r[a];t=o,e=function(){r=r.filter(function(t){return o!==t})},n=new Image,i=t.getAttribute("data-original"),n.onload=function(){t.src=i,e&&e()},n.src=i}()}i(),n.addEventListener("scroll",function(){var t,e;t=i,e=n,clearTimeout(t.tId),t.tId=setTimeout(function(){t.call(e)},500)})}(this);</script><script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"live2d-widget-model-<Epsilon2.1>"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true}});</script></body>
+</html>
