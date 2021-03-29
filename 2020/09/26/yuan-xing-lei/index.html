@@ -19,14 +19,14 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"mimyue-hcm.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+    var CONFIG = {"hostname":"mimyue-hcm.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
   <meta name="description" content="1.原型 首先说一下什么是原型？   这一概念来自：实例对象中的__proto__属性  这一属性就是对象的原型（值可以是对象或null） 指向构造函数的原型对象prototype 并且有且只有一个      访问器（accessor）属性是一个例外，因为分配（assignment）操作是由 setter 函数处理的。因此，写入此类属性实际上与调用函数相同。  &#x2F;&#x2F; admin.fullName">
 <meta property="og:type" content="article">
 <meta property="og:title" content="原型链">
 <meta property="og:url" content="http://mimyue-hcm.github.io/2020/09/26/yuan-xing-lei/index.html">
-<meta property="og:site_name" content="忞月的博客">
+<meta property="og:site_name" content="忞月の博客">
 <meta property="og:description" content="1.原型 首先说一下什么是原型？   这一概念来自：实例对象中的__proto__属性  这一属性就是对象的原型（值可以是对象或null） 指向构造函数的原型对象prototype 并且有且只有一个      访问器（accessor）属性是一个例外，因为分配（assignment）操作是由 setter 函数处理的。因此，写入此类属性实际上与调用函数相同。  &#x2F;&#x2F; admin.fullName">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://mimyue-hcm.github.io/2020/09/26/yuan-xing-lei/img4.png">
@@ -54,7 +54,7 @@
   };
 </script>
 
-  <title>原型链 | 忞月的博客</title>
+  <title>原型链 | 忞月の博客</title>
   
 
 
@@ -237,9 +237,10 @@
 
     <a href="/" class="brand" rel="start">
       <span class="logo-line-before"><i></i></span>
-      <h1 class="site-title">忞月的博客</h1>
+      <h1 class="site-title">忞月の博客</h1>
       <span class="logo-line-after"><i></i></span>
     </a>
+      <p class="site-subtitle" itemprop="description">记录生活中的点点滴滴</p>
   </div>
 
   <div class="site-nav-right">
@@ -340,11 +341,11 @@
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/./images/avatar.jpg">
       <meta itemprop="name" content="忞月">
-      <meta itemprop="description" content="">
+      <meta itemprop="description" content="直到这一刻微笑着说话为止，我至少留下了一公升眼泪">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="忞月的博客">
+      <meta itemprop="name" content="忞月の博客">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
@@ -762,7 +763,7 @@ __proto__对象原型的意义就在于为对象成员查找机制提供一个�
     <img class="site-author-image" itemprop="image" alt="忞月"
       src="/./images/avatar.jpg">
   <p class="site-author-name" itemprop="name">忞月</p>
-  <div class="site-description" itemprop="description"></div>
+  <div class="site-description" itemprop="description">直到这一刻微笑着说话为止，我至少留下了一公升眼泪</div>
 </div>
 <div class="site-state-wrap motion-element">
   <nav class="site-state">
@@ -820,9 +821,10 @@ __proto__对象原型的意义就在于为对象成员查找机制提供一个�
   </span>
   <span class="author" itemprop="copyrightHolder">忞月</span>
 </div>
-<!--隐藏底部 powered By Hexo / 强力驱动
-  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+<!--
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>
+
 -->
 
         
@@ -870,7 +872,7 @@ __proto__对象原型的意义就在于为对象成员查找机制提供一个�
 <script src="/js/motion.js"></script>
 
 
-<script src="/js/schemes/muse.js"></script>
+<script src="/js/schemes/pisces.js"></script>
 
 
 <script src="/js/next-boot.js"></script>
