@@ -1,0 +1,1289 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"mimyue-hcm.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="javascript的Ajax Ajax的全称是Asynchronous JavaScript and XML，意思就是用JavaScript执行异步网络请求，而不需要重载（刷新）整个页面。 Ajax使用XMLHttpRequest对象取得新数据，然后再通过 DOM 将新数据插入到页面中。也就是无需刷新即可从服务器获取数据  使用方法 对于IE7+和其他浏览器，直接使用XML对象，IE6以前使用A">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Ajax,fetch,axios">
+<meta property="og:url" content="http://mimyue-hcm.github.io/2020/10/29/ajax-fetch-axios/index.html">
+<meta property="og:site_name" content="忞月の博客">
+<meta property="og:description" content="javascript的Ajax Ajax的全称是Asynchronous JavaScript and XML，意思就是用JavaScript执行异步网络请求，而不需要重载（刷新）整个页面。 Ajax使用XMLHttpRequest对象取得新数据，然后再通过 DOM 将新数据插入到页面中。也就是无需刷新即可从服务器获取数据  使用方法 对于IE7+和其他浏览器，直接使用XML对象，IE6以前使用A">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://mimyue-hcm.github.io/2020/10/29/ajax-fetch-axios/image-20210331151953251.png">
+<meta property="article:published_time" content="2020-10-29T09:52:53.000Z">
+<meta property="article:modified_time" content="2021-03-31T08:58:58.324Z">
+<meta property="article:author" content="忞月">
+<meta property="article:tag" content="网络请求">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://mimyue-hcm.github.io/2020/10/29/ajax-fetch-axios/image-20210331151953251.png">
+
+<link rel="canonical" href="http://mimyue-hcm.github.io/2020/10/29/ajax-fetch-axios/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Ajax,fetch,axios | 忞月の博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+  <script src="https://cdn.jsdelivr.net/gh/minyue-hcm/live2d-widget@1.0.1/autoload.js"></script>
+<style type="text/css" lang="css">
+    #loading-container{
+        position: fixed;
+        top: 0;
+        left: 0;
+        min-height: 100vh;
+        width: 100vw;
+        z-index: 9999;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background: #FFF;
+        text-align: center;
+        /* loader页面消失采用渐隐的方式*/
+        -webkit-transition: opacity 1s ease;
+        -moz-transition: opacity 1s ease;
+        -o-transition: opacity 1s ease;
+        transition: opacity 1s ease;
+    }
+    .loading-image{
+        width: 120px;
+        height: 50px;
+        transform: translate(-50%);
+    }
+    
+    .loading-image div:nth-child(2) {
+        -webkit-animation: pacman-balls 1s linear 0s infinite;
+        animation: pacman-balls 1s linear 0s infinite
+    }
+
+    .loading-image div:nth-child(3) {
+        -webkit-animation: pacman-balls 1s linear .33s infinite;
+        animation: pacman-balls 1s linear .33s infinite
+    }
+
+    .loading-image div:nth-child(4) {
+        -webkit-animation: pacman-balls 1s linear .66s infinite;
+        animation: pacman-balls 1s linear .66s infinite
+    }
+
+    .loading-image div:nth-child(5) {
+        -webkit-animation: pacman-balls 1s linear .99s infinite;
+        animation: pacman-balls 1s linear .99s infinite
+    }
+    
+   .loading-image div:first-of-type {
+        width: 0;
+        height: 0;
+        border: 25px solid #49b1f5;
+        border-right-color: transparent;
+        border-radius: 25px;
+        -webkit-animation: rotate_pacman_half_up .5s 0s infinite;
+        animation: rotate_pacman_half_up .5s 0s infinite;
+    }
+    .loading-image div:nth-child(2) {
+        width: 0;
+        height: 0;
+        border: 25px solid #49b1f5;
+        border-right-color: transparent;
+        border-radius: 25px;
+        -webkit-animation: rotate_pacman_half_down .5s 0s infinite;
+        animation: rotate_pacman_half_down .5s 0s infinite;
+        margin-top: -50px;
+    }
+    @-webkit-keyframes rotate_pacman_half_up {0% {transform: rotate(270deg)}50% {transform: rotate(1turn)}to {transform: rotate(270deg)}}
+
+    @keyframes rotate_pacman_half_up {0% {transform: rotate(270deg)}50% {transform: rotate(1turn)}to {transform: rotate(270deg)}}
+
+    @-webkit-keyframes rotate_pacman_half_down {0% {transform: rotate(90deg)}50% {transform: rotate(0deg)}to {transform: rotate(90deg)}}
+
+    @keyframes rotate_pacman_half_down {0% {transform: rotate(90deg)}50% {transform: rotate(0deg)}to {transform: rotate(90deg)}}
+    
+    @-webkit-keyframes pacman-balls {75% {opacity: .7}to {transform: translate(-100px, -6.25px)}}
+
+    @keyframes pacman-balls {75% {opacity: .7}to {transform: translate(-100px, -6.25px)}}
+    
+   
+    .loading-image div:nth-child(3),
+    .loading-image div:nth-child(4),
+    .loading-image div:nth-child(5),
+    .loading-image div:nth-child(6){
+        background-color: #49b1f5;
+        width: 15px;
+        height: 15px;
+        border-radius: 100%;
+        margin: 2px;
+        width: 10px;
+        height: 10px;
+        position: absolute;
+        transform: translateY(-6.25px);
+        top: 25px;
+        left: 100px;
+    }
+    .loading-text{
+        margin-bottom: 20vh;
+        text-align: center;
+        color: #2c3e50;
+        font-size: 2rem;
+        box-sizing: border-box;
+        padding: 0 10px;
+        text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    }
+    @media only screen and (max-width: 500px) {
+         .loading-text{
+            font-size: 1.5rem;
+         }
+    }
+    .fadeout {
+        opacity: 0;
+        filter: alpha(opacity=0);
+    }
+    /* logo出现动画 */
+    @-webkit-keyframes fadeInDown{0%{opacity:0;-webkit-transform:translate3d(0,-100%,0);transform:translate3d(0,-100%,0)}100%{opacity:1;-webkit-transform:none;transform:none}}
+    @keyframes fadeInDown{0%{opacity:0;-webkit-transform:translate3d(0,-100%,0);}}
+ </style>
+ <script>
+(function () {
+    const loaded = function(){
+       setTimeout(function(){
+            const loader = document.getElementById("loading-container");
+            loader.className="fadeout" ;//使用渐隐的方法淡出loading page
+            // document.getElementById("body-wrap").style.display="flex";
+            setTimeout(function(){
+                loader.style.display="none";
+            },1000); 
+        },1000);//强制显示loading page 1s  
+    };
+    loaded();
+})()
+ </script>
+<style>.github-emoji { position: relative; display: inline-block; width: 1.2em; min-height: 1.2em; overflow: hidden; vertical-align: top; color: transparent; }  .github-emoji > span { position: relative; z-index: 10; }  .github-emoji img, .github-emoji .fancybox { margin: 0 !important; padding: 0 !important; border: none !important; outline: none !important; text-decoration: none !important; user-select: none !important; cursor: auto !important; }  .github-emoji img { height: 1.2em !important; width: 1.2em !important; position: absolute !important; left: 50% !important; top: 50% !important; transform: translate(-50%, -50%) !important; user-select: none !important; cursor: auto !important; } .github-emoji-fallback { color: inherit; } .github-emoji-fallback img { opacity: 0 !important; }</style>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">忞月の博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">记录生活中的点点滴滴</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://mimyue-hcm.github.io/2020/10/29/ajax-fetch-axios/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/./images/avatar.jpg">
+      <meta itemprop="name" content="忞月">
+      <meta itemprop="description" content="直到这一刻微笑着说话为止，我至少留下了一公升眼泪">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="忞月の博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Ajax,fetch,axios
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-10-29 17:52:53" itemprop="dateCreated datePublished" datetime="2020-10-29T17:52:53+08:00">2020-10-29</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-03-31 16:58:58" itemprop="dateModified" datetime="2021-03-31T16:58:58+08:00">2021-03-31</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JavaScript/" itemprop="url" rel="index"><span itemprop="name">JavaScript</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h3 id="javascript的Ajax"><a href="#javascript的Ajax" class="headerlink" title="javascript的Ajax"></a>javascript的Ajax</h3><ul>
+<li>Ajax的全称是Asynchronous JavaScript and XML，意思就是用JavaScript执行异步网络请求，而不需要重载（刷新）整个页面。</li>
+<li>Ajax使用XMLHttpRequest对象取得新数据，然后再通过 DOM 将新数据插入到页面中。也就是无需刷新即可从服务器获取数据</li>
+</ul>
+<h5 id="使用方法"><a href="#使用方法" class="headerlink" title="使用方法"></a><strong>使用方法</strong></h5><blockquote>
+<p>对于IE7+和其他浏览器，直接使用XML对象，IE6以前使用ActiveXObject对象</p>
+</blockquote>
+<pre class="line-numbers language-js" data-language="js"><code class="language-js"><span class="token keyword">var</span> xhr<span class="token punctuation">;</span>
+<span class="token keyword">if</span><span class="token punctuation">(</span>window<span class="token punctuation">.</span>XMLHttpRquest<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  xhr <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">XMLHttpRequest</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span>
+  xhr <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">ActiveXObject</span><span class="token punctuation">(</span><span class="token string">'Microsoft.XMLHTTP'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h5 id="启动请求"><a href="#启动请求" class="headerlink" title="启动请求"></a><strong>启动请求</strong></h5><pre class="line-numbers language-js" data-language="js"><code class="language-js">xhr<span class="token punctuation">.</span><span class="token function">open</span><span class="token punctuation">(</span>method<span class="token punctuation">,</span> url<span class="token punctuation">,</span> boolean<span class="token punctuation">)</span><span class="token punctuation">;</span>
+xhr<span class="token punctuation">.</span><span class="token function">send</span><span class="token punctuation">(</span><span class="token punctuation">[</span>body<span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+<blockquote>
+<p>method:请求方法：post，get等</p>
+<p>url：请求链接，只能向同源url发送</p>
+<p>boolean：是否异步，默认true（异步）</p>
+<p>body:包含request.body比如post要使用请求体，get方法填null或不填</p>
+<p>注意：调用open并不会真正发送请求，只是启动一个请求以备发送</p>
+</blockquote>
+<h5 id="监听请求"><a href="#监听请求" class="headerlink" title="监听请求"></a><strong>监听请求</strong></h5><blockquote>
+<p>load—请求完成（HTTP状态为400或500），并且响应已完全下载</p>
+<p>error—当无法送出请求，如网络中断，无效URl</p>
+<p>progress—在下载响应期间定期触发，报告下载了多少</p>
+</blockquote>
+<pre class="line-numbers language-js" data-language="js"><code class="language-js">xhr<span class="token punctuation">.</span><span class="token function-variable function">onload</span> <span class="token operator">=</span> <span class="token keyword">function</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token function">alert</span><span class="token punctuation">(</span><span class="token template-string"><span class="token template-punctuation string">`</span><span class="token string">Loaded: </span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">${</span>xhr<span class="token punctuation">.</span>status<span class="token interpolation-punctuation punctuation">}</span></span><span class="token string"> </span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">${</span>xhr<span class="token punctuation">.</span>response<span class="token interpolation-punctuation punctuation">}</span></span><span class="token template-punctuation string">`</span></span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">;</span>
+
+xhr<span class="token punctuation">.</span><span class="token function-variable function">onerror</span> <span class="token operator">=</span> <span class="token keyword">function</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span> <span class="token comment">// 仅在根本无法发出请求时触发</span>
+  <span class="token function">alert</span><span class="token punctuation">(</span><span class="token template-string"><span class="token template-punctuation string">`</span><span class="token string">Network Error</span><span class="token template-punctuation string">`</span></span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">;</span>
+
+xhr<span class="token punctuation">.</span><span class="token function-variable function">onprogress</span> <span class="token operator">=</span> <span class="token keyword">function</span><span class="token punctuation">(</span><span class="token parameter">event</span><span class="token punctuation">)</span> <span class="token punctuation">{</span> <span class="token comment">// 定期触发</span>
+  <span class="token comment">// event.loaded —— 已经下载了多少字节</span>
+  <span class="token comment">// event.lengthComputable = true，当服务器发送了 Content-Length header 时</span>
+  <span class="token comment">// event.total —— 总字节数（如果 lengthComputable 为 true）</span>
+  <span class="token function">alert</span><span class="token punctuation">(</span><span class="token template-string"><span class="token template-punctuation string">`</span><span class="token string">Received </span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">${</span>event<span class="token punctuation">.</span>loaded<span class="token interpolation-punctuation punctuation">}</span></span><span class="token string"> of </span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">${</span>event<span class="token punctuation">.</span>total<span class="token interpolation-punctuation punctuation">}</span></span><span class="token template-punctuation string">`</span></span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<blockquote>
+<p>status: HTTP状态码，200,404,403等，非HTTP错误为0；</p>
+<p>statusText：状态信息，200状态码对应OK；404对应Not Found；403对应Forbidden</p>
+<p>response：旧版本为responseText，服务器响应体</p>
+</blockquote>
+<p>我们还可以指定<strong>超时</strong></p>
+<pre class="line-numbers language-none"><code class="language-none">xhr.timeout = 10000; //timeout单位是ms<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>URL搜索参数（确保正确编码）</p>
+<pre class="line-numbers language-js" data-language="js"><code class="language-js"><span class="token keyword">let</span> url <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">URL</span><span class="token punctuation">(</span><span class="token string">'https://google.com/search'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+url<span class="token punctuation">.</span>searchParams<span class="token punctuation">.</span><span class="token function">set</span><span class="token punctuation">(</span><span class="token string">'q'</span><span class="token punctuation">,</span><span class="token string">'test me!'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment">//编码</span>
+xhr<span class="token punctuation">.</span><span class="token function">open</span><span class="token punctuation">(</span><span class="token string">'GET'</span><span class="token punctuation">,</span> url<span class="token punctuation">)</span><span class="token punctuation">;</span><span class="token comment">//https://google.com/search?q=test+me%21</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p><strong>readyState</strong></p>
+<p>xml的状态由 <code>0</code> → <code>1</code> → <code>2</code> → <code>3</code> → … → <code>3</code> → <code>4</code> 通过网络接收到一个数据包就重复一次状态<code>3</code></p>
+<pre class="line-numbers language-js" data-language="js"><code class="language-js"><span class="token constant">UNSENT</span> <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span> <span class="token comment">// 初始状态</span>
+<span class="token constant">OPENED</span> <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span> <span class="token comment">// open 被调用</span>
+<span class="token constant">HEADERS_RECEIVED</span> <span class="token operator">=</span> <span class="token number">2</span><span class="token punctuation">;</span> <span class="token comment">// 接收到 response header</span>
+<span class="token constant">LOADING</span> <span class="token operator">=</span> <span class="token number">3</span><span class="token punctuation">;</span> <span class="token comment">// 响应正在被加载（接收到一个数据包）</span>
+<span class="token constant">DONE</span> <span class="token operator">=</span> <span class="token number">4</span><span class="token punctuation">;</span> <span class="token comment">// 请求完成</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<pre class="line-numbers language-js" data-language="js"><code class="language-js"><span class="token comment">//以前的监听事件就是这样实现的；现在被load，error，progress代替</span>
+xhr<span class="token punctuation">.</span><span class="token function-variable function">onreadystatechange</span> <span class="token operator">=</span> <span class="token keyword">function</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token keyword">if</span><span class="token punctuation">(</span>xhr<span class="token punctuation">.</span>readyState <span class="token operator">===</span> <span class="token number">3</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token comment">//加载中</span>
+  <span class="token punctuation">}</span>
+  <span class="token keyword">if</span><span class="token punctuation">(</span>xhr<span class="token punctuation">.</span>readyState <span class="token operator">===</span> <span class="token number">4</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token comment">//请求完成</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<a id="more"></a>
+
+<h5 id="完整示例"><a href="#完整示例" class="headerlink" title="完整示例"></a><strong>完整示例</strong></h5><pre class="line-numbers language-js" data-language="js"><code class="language-js"><span class="token comment">//1.创建一个XML对象</span>
+<span class="token keyword">let</span> xhr <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">XMLHttpRequest</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token comment">//2.配置请求</span>
+xhr<span class="token punctuation">.</span><span class="token function">open</span><span class="token punctuation">(</span><span class="token string">'GET'</span><span class="token punctuation">,</span><span class="token string">'同源url'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token comment">//3.发送网络请求</span>
+xhr<span class="token punctuation">.</span><span class="token function">send</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment">//4.收到响应后调用</span>
+xhr<span class="token punctuation">.</span><span class="token function-variable function">onload</span> <span class="token operator">=</span> <span class="token keyword">function</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token keyword">if</span><span class="token punctuation">(</span>xhr<span class="token punctuation">.</span>status <span class="token operator">!==</span> <span class="token number">200</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token function">alert</span><span class="token punctuation">(</span><span class="token template-string"><span class="token template-punctuation string">`</span><span class="token string">Error</span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">${</span>xhr<span class="token punctuation">.</span>status<span class="token interpolation-punctuation punctuation">}</span></span><span class="token string">:</span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">${</span>xhr<span class="token punctuation">.</span>statusText<span class="token interpolation-punctuation punctuation">}</span></span><span class="token template-punctuation string">`</span></span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span>
+    <span class="token function">alert</span><span class="token punctuation">(</span><span class="token template-string"><span class="token template-punctuation string">`</span><span class="token string">Done,got </span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">${</span>xhr<span class="token punctuation">.</span>response<span class="token punctuation">.</span>length<span class="token interpolation-punctuation punctuation">}</span></span><span class="token string"> bytes</span><span class="token template-punctuation string">`</span></span><span class="token punctuation">)</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+
+xhr<span class="token punctuation">.</span><span class="token function-variable function">onprogress</span> <span class="token operator">=</span> <span class="token keyword">function</span><span class="token punctuation">(</span><span class="token parameter">event</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token keyword">if</span><span class="token punctuation">(</span>event<span class="token punctuation">.</span>lengthComtable<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token function">alert</span><span class="token punctuation">(</span><span class="token template-string"><span class="token template-punctuation string">`</span><span class="token string">Received </span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">${</span>event<span class="token punctuation">.</span>loaded<span class="token interpolation-punctuation punctuation">}</span></span><span class="token string"> of </span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">${</span>event<span class="token punctuation">.</span>total<span class="token interpolation-punctuation punctuation">}</span></span><span class="token string"> bytes</span><span class="token template-punctuation string">`</span></span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span>
+    <span class="token function">alert</span><span class="token punctuation">(</span><span class="token template-string"><span class="token template-punctuation string">`</span><span class="token string">Received </span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">${</span>event<span class="token punctuation">.</span>loaded<span class="token interpolation-punctuation punctuation">}</span></span><span class="token string"> bytes</span><span class="token template-punctuation string">`</span></span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+
+xhr<span class="token punctuation">.</span><span class="token function-variable function">onerror</span> <span class="token operator">=</span> <span class="token keyword">function</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token function">alert</span><span class="token punctuation">(</span><span class="token string">'Request failed'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h5 id="响应类型"><a href="#响应类型" class="headerlink" title="响应类型"></a>响应类型</h5><p>使用<code>xhr.responseType</code>设置响应格式</p>
+<ul>
+<li>“” （默认）：响应格式为字符串</li>
+<li>“text”：字符串</li>
+<li>“arraybuffer”：响应格式为ArrayBuffer，二进制数据</li>
+<li>“blob”：响应格式为Blod，二进制数据</li>
+<li>“document“：响应格式为XML document</li>
+<li>“json”：响应为JSON（自动解析）</li>
+</ul>
+<p>以JSON为例</p>
+<pre class="line-numbers language-js" data-language="js"><code class="language-js"><span class="token keyword">let</span> xhr <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">XMLHttpRequest</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+xhr<span class="token punctuation">.</span><span class="token function">open</span><span class="token punctuation">(</span><span class="token string">'GET'</span><span class="token punctuation">,</span> <span class="token string">'/article/xmlhttprequest/example/json'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+xhr<span class="token punctuation">.</span>responseType <span class="token operator">=</span> <span class="token string">'json'</span><span class="token punctuation">;</span>
+
+xhr<span class="token punctuation">.</span><span class="token function">send</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment">// 响应为 {"message": "Hello, world!"}</span>
+xhr<span class="token punctuation">.</span><span class="token function-variable function">onload</span> <span class="token operator">=</span> <span class="token keyword">function</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token keyword">let</span> responseObj <span class="token operator">=</span> xhr<span class="token punctuation">.</span>response<span class="token punctuation">;</span>
+  <span class="token function">alert</span><span class="token punctuation">(</span>responseObj<span class="token punctuation">.</span>message<span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">// Hello, world!</span>
+<span class="token punctuation">}</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h5 id="终止请求"><a href="#终止请求" class="headerlink" title="终止请求"></a>终止请求</h5><p>随时都可以中止请求，调用<code>xhr.abort()</code>;触发abort事件，xhr.status变为0</p>
+<h5 id="同步请求"><a href="#同步请求" class="headerlink" title="同步请求"></a>同步请求</h5><p>open的第三个参数为<code>false</code>,阻塞脚本执行，像alert</p>
+<pre class="line-numbers language-js" data-language="js"><code class="language-js"><span class="token keyword">let</span> xhr <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">XMLHttpRequest</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+xhr<span class="token punctuation">.</span><span class="token function">open</span><span class="token punctuation">(</span><span class="token string">'GET'</span><span class="token punctuation">,</span> <span class="token string">'/article/xmlhttprequest/hello.txt'</span><span class="token punctuation">,</span> <span class="token boolean">false</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token keyword">try</span> <span class="token punctuation">{</span>
+  xhr<span class="token punctuation">.</span><span class="token function">send</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>		<span class="token comment">//阻塞</span>
+  <span class="token keyword">if</span> <span class="token punctuation">(</span>xhr<span class="token punctuation">.</span>status <span class="token operator">!=</span> <span class="token number">200</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token function">alert</span><span class="token punctuation">(</span><span class="token template-string"><span class="token template-punctuation string">`</span><span class="token string">Error </span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">${</span>xhr<span class="token punctuation">.</span>status<span class="token interpolation-punctuation punctuation">}</span></span><span class="token string">: </span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">${</span>xhr<span class="token punctuation">.</span>statusText<span class="token interpolation-punctuation punctuation">}</span></span><span class="token template-punctuation string">`</span></span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span>
+    <span class="token function">alert</span><span class="token punctuation">(</span>xhr<span class="token punctuation">.</span>response<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span> <span class="token keyword">catch</span><span class="token punctuation">(</span>err<span class="token punctuation">)</span> <span class="token punctuation">{</span> <span class="token comment">// 代替 onerror</span>
+  <span class="token function">alert</span><span class="token punctuation">(</span><span class="token string">"Request failed"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>缺点：阻塞程序执行；没有进度指示；不能向其他域发送请求；不能设置超时</p>
+<h5 id="HTTP-Header"><a href="#HTTP-Header" class="headerlink" title="HTTP-Header"></a>HTTP-Header</h5><p>XML允许发送自定义header，并且可以从响应中读取header</p>
+<ol>
+<li><p>setRequestHeader(name, value)</p>
+<pre class="line-numbers language-js" data-language="js"><code class="language-js">xhr<span class="token punctuation">.</span><span class="token function">setRequestHeader</span><span class="token punctuation">(</span><span class="token string">'Content-Type'</span><span class="token punctuation">,</span> <span class="token string">'application/json'</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+</li>
+<li><p>getResponseHeader(name)/getAllResponseHeaders()</p>
+<pre class="line-numbers language-none"><code class="language-none">xhr.getResponseHeader('Content-Type');
+
+//header单行形式返回
+Cache-Control: max-age=31536000
+Content-Length: 4260
+Content-Type: image/png
+Date: Sat, 08 Sep 2012 16:53:16 GMT<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+</li>
+</ol>
+<p>注意：不能获取set-cookie；header只加不减，不能移除；对于一些浏览器专门管理的header不能修改（Referer，Host）</p>
+<p>补充：Host，Origin，Referer</p>
+<blockquote>
+<p>1.Host:请求将被发送的目的地，<strong>包括域名端口号</strong></p>
+<p>2.Referer：告诉服务器请求的原始资源URL，用于所有请求；<strong>协议+域名+查询参数（不包括锚点信息）</strong>；file协议下是不带referer的</p>
+<p>3.Origin：说明请求从哪里发起，<strong>协议+域名</strong>；存在CORS请求或者POST请求</p>
+</blockquote>
+<h5 id="获取header对象"><a href="#获取header对象" class="headerlink" title="获取header对象"></a>获取header对象</h5><p>header之间都是’/r/n’为换行符；并且name和value之间都是’:’分割</p>
+<pre class="line-numbers language-js" data-language="js"><code class="language-js"><span class="token keyword">let</span> headers <span class="token operator">=</span> xhr
+  <span class="token punctuation">.</span><span class="token function">getAllResponseHeaders</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+  <span class="token punctuation">.</span><span class="token function">split</span><span class="token punctuation">(</span><span class="token string">'\r\n'</span><span class="token punctuation">)</span>
+  <span class="token punctuation">.</span><span class="token function">reduce</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token parameter">result<span class="token punctuation">,</span> current</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+    <span class="token keyword">let</span> <span class="token punctuation">[</span>name<span class="token punctuation">,</span> value<span class="token punctuation">]</span> <span class="token operator">=</span> current<span class="token punctuation">.</span><span class="token function">split</span><span class="token punctuation">(</span><span class="token string">': '</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    result<span class="token punctuation">[</span>name<span class="token punctuation">]</span> <span class="token operator">=</span> value<span class="token punctuation">;</span>
+    <span class="token keyword">return</span> result<span class="token punctuation">;</span>
+  <span class="token punctuation">}</span><span class="token punctuation">,</span> <span class="token punctuation">{</span><span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment">// headers['Content-Type'] = 'image/png'</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h5 id="POST，FormData"><a href="#POST，FormData" class="headerlink" title="POST，FormData"></a>POST，FormData</h5><p>POST请求可以很好地使用FormData对象作为请求体</p>
+<pre class="line-numbers language-js" data-language="js"><code class="language-js"><span class="token keyword">let</span> formData <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">FormData</span><span class="token punctuation">(</span><span class="token punctuation">[</span>form<span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">// 创建一个对象，可以选择从 &lt;form&gt; 中获取数据</span>
+formData<span class="token punctuation">.</span><span class="token function">append</span><span class="token punctuation">(</span>name<span class="token punctuation">,</span> value<span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">// 附加一个字段</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+<ol>
+<li><code>xhr.open('POST', ...)</code> —— 使用 <code>POST</code> 方法。</li>
+<li><code>xhr.send(formData)</code> 将表单发送到服务器。</li>
+</ol>
+<p>示例：</p>
+<pre class="line-numbers language-html" data-language="html"><code class="language-html"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>form</span> <span class="token attr-name">name</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>person<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span>
+  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>input</span> <span class="token attr-name">name</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>name<span class="token punctuation">"</span></span> <span class="token attr-name">value</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>John<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span>
+  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>input</span> <span class="token attr-name">name</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>surname<span class="token punctuation">"</span></span> <span class="token attr-name">value</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>Smith<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>form</span><span class="token punctuation">&gt;</span></span>
+
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>script</span><span class="token punctuation">&gt;</span></span><span class="token script"><span class="token language-javascript">
+  <span class="token comment">// 从表单预填充 FormData</span>
+  <span class="token keyword">let</span> formData <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">FormData</span><span class="token punctuation">(</span>document<span class="token punctuation">.</span>forms<span class="token punctuation">.</span>person<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+  <span class="token comment">// 附加一个字段</span>
+  formData<span class="token punctuation">.</span><span class="token function">append</span><span class="token punctuation">(</span><span class="token string">"middle"</span><span class="token punctuation">,</span> <span class="token string">"Lee"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+  <span class="token comment">// 将其发送出去</span>
+  <span class="token keyword">let</span> xhr <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">XMLHttpRequest</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  xhr<span class="token punctuation">.</span><span class="token function">open</span><span class="token punctuation">(</span><span class="token string">"POST"</span><span class="token punctuation">,</span> <span class="token string">"/article/xmlhttprequest/post/user"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  xhr<span class="token punctuation">.</span><span class="token function">send</span><span class="token punctuation">(</span>formData<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+  xhr<span class="token punctuation">.</span><span class="token function-variable function">onload</span> <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token function">alert</span><span class="token punctuation">(</span>xhr<span class="token punctuation">.</span>response<span class="token punctuation">)</span><span class="token punctuation">;</span>
+</span></span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>script</span><span class="token punctuation">&gt;</span></span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>以 <code>multipart/form-data</code> 编码发送表单。</p>
+<p><strong>补充</strong>：HTML表单的entype三种类型</p>
+<ol>
+<li>application/x-www-urlencoded</li>
+</ol>
+<ul>
+<li><p>默认编码模式，数据会被以x-www-urlencoded 方式编码到 Body 中来传送，如果是GET请求，会附在url后面发送（GET只支持ASCII字符集，其一个劣势）</p>
+</li>
+<li><p>编码方式：数据会被编码成以<code>&amp;</code>分隔的键值对；字符以URL编码方式编码。</p>
+</li>
+</ul>
+<pre class="line-numbers language-none"><code class="language-none">// 转换过程: {a: 1, b: 2} -&gt; a=1&amp;b=2 -&gt; 如下(最终形式)
+"a%3D1%26b%3D2"<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+<ol start="2">
+<li>multipart/form-data</li>
+</ol>
+<ul>
+<li>请求头中<code>Content-Type</code>字段会包含<code>boundary</code>（由浏览器默认指定）</li>
+<li>数据会分为多个部分，每一个部分都通过分隔符分隔，并且都有HTTP头部描述子包体，最后<code>--</code>结束</li>
+</ul>
+<pre class="line-numbers language-none"><code class="language-none">//请求体
+Content-Disposition: form-data;name="data1";
+Content-Type: text/plain
+data1
+----WebkitFormBoundaryRRJKeWfHPGrS4LKe
+Content-Disposition: form-data;name="data2";
+Content-Type: text/plain
+data2
+----WebkitFormBoundaryRRJKeWfHPGrS4LKe--<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p><strong>优点</strong>：每个表单元素都是独立的资源表述；对于一些文件上传，基本使用这个，而不是前者，没必要url编码。</p>
+<ol start="3">
+<li>text/plain</li>
+</ol>
+<ul>
+<li>按照键值对排列表单数据<code>key1=value1\r\nkey2=value2</code>，不进行转义。</li>
+</ul>
+<p><strong>使用JSON字符串形式发送</strong></p>
+<ul>
+<li>不要忘了设置 <code>Content-Type: application/json</code></li>
+</ul>
+<pre class="line-numbers language-js" data-language="js"><code class="language-js"><span class="token keyword">let</span> xhr <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">XMLHttpRequest</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token keyword">let</span> json <span class="token operator">=</span> <span class="token constant">JSON</span><span class="token punctuation">.</span><span class="token function">stringify</span><span class="token punctuation">(</span><span class="token punctuation">{</span>
+  name<span class="token operator">:</span> <span class="token string">"John"</span><span class="token punctuation">,</span>
+  surname<span class="token operator">:</span> <span class="token string">"Smith"</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+xhr<span class="token punctuation">.</span><span class="token function">open</span><span class="token punctuation">(</span><span class="token string">"POST"</span><span class="token punctuation">,</span> <span class="token string">'/submit'</span><span class="token punctuation">)</span>
+xhr<span class="token punctuation">.</span><span class="token function">setRequestHeader</span><span class="token punctuation">(</span><span class="token string">'Content-type'</span><span class="token punctuation">,</span> <span class="token string">'application/json; charset=utf-8'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+xhr<span class="token punctuation">.</span><span class="token function">send</span><span class="token punctuation">(</span>json<span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h5 id="上传进度"><a href="#上传进度" class="headerlink" title="上传进度"></a>上传进度</h5><p>对于下载进度我们有onprogress事件监听，上传进度<code>xhr.upload</code></p>
+<ul>
+<li><code>loadstart</code> —— 上传开始。</li>
+<li><code>progress</code> —— 上传期间定期触发。</li>
+<li><code>abort</code> —— 上传中止。</li>
+<li><code>error</code> —— 非 HTTP 错误。</li>
+<li><code>load</code> —— 上传成功完成。</li>
+<li><code>timeout</code> —— 上传超时（如果设置了 <code>timeout</code> 属性）。</li>
+<li><code>loadend</code> —— 上传完成，无论成功还是 error。</li>
+</ul>
+<p><strong>示例</strong></p>
+<pre class="line-numbers language-html" data-language="html"><code class="language-html"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>input</span> <span class="token attr-name">type</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>file<span class="token punctuation">"</span></span> <span class="token attr-name">onchange</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>upload(this.files[0])<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span>
+<span class="token comment">&lt;!--onchange事件:对于file类型在选择文件后触发--&gt;</span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>script</span><span class="token punctuation">&gt;</span></span><span class="token script"><span class="token language-javascript">
+<span class="token keyword">function</span> <span class="token function">upload</span><span class="token punctuation">(</span><span class="token parameter">file</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token keyword">let</span> xhr <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">XMLHttpRequest</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+  <span class="token comment">// 跟踪上传进度</span>
+  xhr<span class="token punctuation">.</span>upload<span class="token punctuation">.</span><span class="token function-variable function">onprogress</span> <span class="token operator">=</span> <span class="token keyword">function</span><span class="token punctuation">(</span><span class="token parameter">event</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token template-string"><span class="token template-punctuation string">`</span><span class="token string">Uploaded </span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">${</span>event<span class="token punctuation">.</span>loaded<span class="token interpolation-punctuation punctuation">}</span></span><span class="token string"> of </span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">${</span>event<span class="token punctuation">.</span>total<span class="token interpolation-punctuation punctuation">}</span></span><span class="token template-punctuation string">`</span></span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span><span class="token punctuation">;</span>
+
+  <span class="token comment">// 跟踪完成：无论成功与否</span>
+  xhr<span class="token punctuation">.</span><span class="token function-variable function">onloadend</span> <span class="token operator">=</span> <span class="token keyword">function</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>xhr<span class="token punctuation">.</span>status <span class="token operator">==</span> <span class="token number">200</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">"success"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span>
+      console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">"error "</span> <span class="token operator">+</span> <span class="token keyword">this</span><span class="token punctuation">.</span>status<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+  <span class="token punctuation">}</span><span class="token punctuation">;</span>
+
+  xhr<span class="token punctuation">.</span><span class="token function">open</span><span class="token punctuation">(</span><span class="token string">"POST"</span><span class="token punctuation">,</span> <span class="token string">"/article/xmlhttprequest/post/upload"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  xhr<span class="token punctuation">.</span><span class="token function">send</span><span class="token punctuation">(</span>file<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+</span></span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>script</span><span class="token punctuation">&gt;</span></span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h3 id="jQuery的Ajax"><a href="#jQuery的Ajax" class="headerlink" title="jQuery的Ajax"></a>jQuery的Ajax</h3><pre class="line-numbers language-js" data-language="js"><code class="language-js">$<span class="token punctuation">.</span><span class="token function">ajax</span><span class="token punctuation">(</span><span class="token punctuation">{</span>
+  url<span class="token operator">:</span><span class="token string">""</span><span class="token punctuation">,</span>
+  type<span class="token operator">:</span><span class="token string">"GET"</span><span class="token punctuation">,</span>
+  contentType<span class="token operator">:</span> <span class="token string">''</span><span class="token punctuation">,</span>
+  async<span class="token operator">:</span><span class="token boolean">true</span><span class="token punctuation">,</span>
+  data<span class="token operator">:</span><span class="token punctuation">{</span><span class="token punctuation">}</span><span class="token punctuation">,</span>
+  dataType<span class="token operator">:</span><span class="token string">""</span><span class="token punctuation">,</span>
+  <span class="token function-variable function">success</span><span class="token operator">:</span> <span class="token keyword">function</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<blockquote>
+<p>url 必填项，规定把请求发送到哪个 URL。</p>
+<p>type 以什么样的方式获取数据，是get或post</p>
+<p>contentType：发送POST请求的格式，默认值为’application/x-www-form-urlencoded;</p>
+<p>charset=UTF-8’，也可以指定为text/plain、application/json</p>
+<p>async 是否异步执行AJAX请求，默认为true，千万不要指定为false</p>
+<p>data 发送的数据，可以是字符串、数组或object。如果是GET请求，data将被转换成query附加到URL上，如果是POST请求，根据contentType把data序列化成合适的格式；</p>
+<p>dataType</p>
+<p>接收的数据格式，可以指定为’html’、‘xml’、‘json’、’text’等，缺省情况下根据响应的Content-Type猜测。</p>
+<p>success 可选。执行成功时返回的数据。</p>
+</blockquote>
+<p>是基于xhr开发的，针对MVC模式的编程模式，不太适合当前的MVVM。jQuery本身比较大。</p>
+<h3 id="Axios"><a href="#Axios" class="headerlink" title="Axios"></a>Axios</h3><p>也是对原生XHR的封装；Promise实现版本，很好的实现异步逻辑。可以用于浏览器和node的HTTP库。</p>
+<ul>
+<li>从浏览器中创建 <a target="_blank" rel="noopener" href="https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest">XMLHttpRequests</a></li>
+<li>从 node.js 创建 <a target="_blank" rel="noopener" href="http://nodejs.org/api/http.html">http</a> 请求</li>
+<li>支持 <a target="_blank" rel="noopener" href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a> API</li>
+<li>拦截请求和响应</li>
+<li>转换请求数据和响应数据</li>
+<li>取消请求</li>
+<li>自动转换 JSON 数据</li>
+<li>客户端支持防御 <a target="_blank" rel="noopener" href="http://en.wikipedia.org/wiki/Cross-site_request_forgery">XSRF</a></li>
+</ul>
+<h5 id="设置全局axios默认值"><a href="#设置全局axios默认值" class="headerlink" title="设置全局axios默认值"></a>设置全局axios默认值</h5><pre class="line-numbers language-js" data-language="js"><code class="language-js">axios<span class="token punctuation">.</span>defaults<span class="token punctuation">.</span>baseURL <span class="token operator">=</span> <span class="token string">'https://api.example.com'</span><span class="token punctuation">;</span>
+axios<span class="token punctuation">.</span>defaults<span class="token punctuation">.</span>headers<span class="token punctuation">.</span>common<span class="token punctuation">[</span><span class="token string">'Authorization'</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token constant">AUTH_TOKEN</span><span class="token punctuation">;</span>
+axios<span class="token punctuation">.</span>defaults<span class="token punctuation">.</span>headers<span class="token punctuation">.</span>post<span class="token punctuation">[</span><span class="token string">'Content-Type'</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token string">'application/x-www-form-urlencoded'</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
+<blockquote>
+<p>注：axios的headers的content-type默认<code>application/json</code></p>
+<p>默认情况下，axios会将js对象序列化为JSON，get请求对请求参数不用处理；post请求并且content-type为application/x-www-form-urlencoded，需要使用URLSearchParms格式化请求参数，否则content-type依然是application/JSON</p>
+<pre class="line-numbers language-js" data-language="js"><code class="language-js"><span class="token keyword">var</span> params <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">URLSearchParams</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+params<span class="token punctuation">.</span><span class="token function">append</span><span class="token punctuation">(</span><span class="token string">'param1'</span><span class="token punctuation">,</span> <span class="token string">'value1'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+params<span class="token punctuation">.</span><span class="token function">append</span><span class="token punctuation">(</span><span class="token string">'param2'</span><span class="token punctuation">,</span> <span class="token string">'value2'</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+</blockquote>
+<h5 id="get请求三种方法"><a href="#get请求三种方法" class="headerlink" title="get请求三种方法"></a>get请求三种方法</h5><pre class="line-numbers language-js" data-language="js"><code class="language-js"><span class="token comment">// 第一种写法</span>
+axios<span class="token punctuation">.</span><span class="token function">get</span><span class="token punctuation">(</span><span class="token string">'/user?id=12345&amp;name=xiaoming'</span><span class="token punctuation">)</span>
+<span class="token punctuation">.</span><span class="token function">then</span><span class="token punctuation">(</span><span class="token keyword">function</span> <span class="token punctuation">(</span><span class="token parameter">response</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span>response<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span>
+<span class="token punctuation">.</span><span class="token function">catch</span><span class="token punctuation">(</span><span class="token keyword">function</span> <span class="token punctuation">(</span><span class="token parameter">error</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span>error<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment">// 第二种写法</span>
+axios<span class="token punctuation">.</span><span class="token function">get</span><span class="token punctuation">(</span><span class="token string">'/user'</span><span class="token punctuation">,</span> <span class="token punctuation">{</span>
+    params<span class="token operator">:</span> <span class="token punctuation">{</span>
+      id<span class="token operator">:</span> <span class="token string">'12345'</span>，
+      name<span class="token operator">:</span> <span class="token string">'xiaoming'</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span>
+<span class="token punctuation">.</span><span class="token function">then</span><span class="token punctuation">(</span><span class="token keyword">function</span> <span class="token punctuation">(</span><span class="token parameter">response</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span>response<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span>
+<span class="token punctuation">.</span><span class="token function">catch</span><span class="token punctuation">(</span><span class="token keyword">function</span> <span class="token punctuation">(</span><span class="token parameter">error</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span>error<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment">// 第三种写法</span>
+<span class="token function">axios</span><span class="token punctuation">(</span><span class="token punctuation">{</span>
+    url<span class="token operator">:</span> <span class="token string">'/user'</span><span class="token punctuation">,</span>
+    method<span class="token operator">:</span> <span class="token string">'get'</span><span class="token punctuation">,</span>
+    params<span class="token operator">:</span> <span class="token punctuation">{</span>
+      id<span class="token operator">:</span> <span class="token string">'12345'</span>，
+      name<span class="token operator">:</span> <span class="token string">'xiaoming'</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span>
+<span class="token punctuation">.</span><span class="token function">then</span><span class="token punctuation">(</span><span class="token keyword">function</span> <span class="token punctuation">(</span><span class="token parameter">response</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span>response<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span>
+<span class="token punctuation">.</span><span class="token function">catch</span><span class="token punctuation">(</span><span class="token keyword">function</span> <span class="token punctuation">(</span><span class="token parameter">error</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span>error<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h5 id="post请求两种方法"><a href="#post请求两种方法" class="headerlink" title="post请求两种方法"></a>post请求两种方法</h5><pre class="line-numbers language-js" data-language="js"><code class="language-js"><span class="token comment">// 第一种写法</span>
+<span class="token function">axios</span><span class="token punctuation">(</span><span class="token punctuation">{</span>
+    url<span class="token operator">:</span> <span class="token string">'/user'</span><span class="token punctuation">,</span>
+    method<span class="token operator">:</span> <span class="token string">'post'</span><span class="token punctuation">,</span>
+    headers<span class="token operator">:</span> <span class="token punctuation">{</span>
+        <span class="token string">'Content-Type'</span><span class="token operator">:</span> <span class="token string">'application/json'</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span>
+    data<span class="token operator">:</span> <span class="token punctuation">{</span>
+      id<span class="token operator">:</span> <span class="token string">'12345'</span>，
+      name<span class="token operator">:</span> <span class="token string">'xiaoming'</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span>
+<span class="token punctuation">.</span><span class="token function">then</span><span class="token punctuation">(</span><span class="token keyword">function</span> <span class="token punctuation">(</span><span class="token parameter">response</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span>response<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span>
+<span class="token punctuation">.</span><span class="token function">catch</span><span class="token punctuation">(</span><span class="token keyword">function</span> <span class="token punctuation">(</span><span class="token parameter">error</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span>error<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment">// 第二种写法</span>
+<span class="token keyword">var</span> url <span class="token operator">=</span> <span class="token string">'/user'</span><span class="token punctuation">;</span>
+<span class="token keyword">var</span> data <span class="token operator">=</span> <span class="token punctuation">{</span>
+      id<span class="token operator">:</span> <span class="token string">'12345'</span>，
+      name<span class="token operator">:</span> <span class="token string">'xiaoming'</span>
+    <span class="token punctuation">}</span><span class="token punctuation">;</span>
+axios<span class="token punctuation">.</span><span class="token function">post</span><span class="token punctuation">(</span>url<span class="token punctuation">,</span> data<span class="token punctuation">,</span> <span class="token punctuation">{</span>
+       headers<span class="token operator">:</span> <span class="token punctuation">{</span>
+        <span class="token string">'Content-Type'</span><span class="token operator">:</span> <span class="token string">'application/json'</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span>
+<span class="token punctuation">.</span><span class="token function">then</span><span class="token punctuation">(</span><span class="token keyword">function</span> <span class="token punctuation">(</span><span class="token parameter">response</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span>response<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span>
+<span class="token punctuation">.</span><span class="token function">catch</span><span class="token punctuation">(</span><span class="token keyword">function</span> <span class="token punctuation">(</span><span class="token parameter">error</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span>error<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h5 id="并发请求"><a href="#并发请求" class="headerlink" title="并发请求"></a>并发请求</h5><blockquote>
+<p>axios.all()  axios.spread()</p>
+</blockquote>
+<pre class="line-numbers language-js" data-language="js"><code class="language-js"><span class="token keyword">function</span> <span class="token function">getUserAccount</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token keyword">return</span> axios<span class="token punctuation">.</span><span class="token function">get</span><span class="token punctuation">(</span><span class="token string">'/user/12345'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+ 
+<span class="token keyword">function</span> <span class="token function">getUserPermissions</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token keyword">return</span> axios<span class="token punctuation">.</span><span class="token function">get</span><span class="token punctuation">(</span><span class="token string">'/user/12345/permissions'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+ 
+axios<span class="token punctuation">.</span><span class="token function">all</span><span class="token punctuation">(</span><span class="token punctuation">[</span><span class="token function">getUserAccount</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token function">getUserPermissions</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+  <span class="token punctuation">.</span><span class="token function">then</span><span class="token punctuation">(</span>axios<span class="token punctuation">.</span><span class="token function">spread</span><span class="token punctuation">(</span><span class="token keyword">function</span> <span class="token punctuation">(</span><span class="token parameter">acct<span class="token punctuation">,</span> perms</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token comment">// 两个请求现在都执行完成</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h5 id="创建实例"><a href="#创建实例" class="headerlink" title="创建实例"></a>创建实例</h5><blockquote>
+<p>axios.create([config])</p>
+</blockquote>
+<pre class="line-numbers language-js" data-language="js"><code class="language-js"><span class="token keyword">var</span> instance <span class="token operator">=</span> axios<span class="token punctuation">.</span><span class="token function">create</span><span class="token punctuation">(</span><span class="token punctuation">{</span>
+  baseURL<span class="token operator">:</span> <span class="token string">'http://localhost:3000/'</span><span class="token punctuation">,</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
+<blockquote>
+<p>配置项优先级：</p>
+</blockquote>
+<blockquote>
+<p>config参数 &gt; 实例的defaults属性 &gt; node_modules/axios/lib/defaults.js 找到的库的默认值</p>
+</blockquote>
+<pre class="line-numbers language-js" data-language="js"><code class="language-js"><span class="token comment">// 使用由库提供的配置的默认值来创建实例</span>
+<span class="token comment">// 此时超时配置的默认值是 `0`</span>
+<span class="token keyword">var</span> instance <span class="token operator">=</span> axios<span class="token punctuation">.</span><span class="token function">create</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+ 
+<span class="token comment">// 覆写库的超时默认值</span>
+<span class="token comment">// 现在，所有请求都会等待 2.5 秒</span>
+instance<span class="token punctuation">.</span>defaults<span class="token punctuation">.</span>timeout <span class="token operator">=</span> <span class="token number">2500</span><span class="token punctuation">;</span>
+ 
+<span class="token comment">// 为已知需要花费很长时间的请求覆写超时设置</span>
+instance<span class="token punctuation">.</span><span class="token function">get</span><span class="token punctuation">(</span><span class="token string">'/longRequest'</span><span class="token punctuation">,</span> <span class="token punctuation">{</span>
+  timeout<span class="token operator">:</span> <span class="token number">5000</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h5 id="拦截器"><a href="#拦截器" class="headerlink" title="拦截器"></a>拦截器</h5><blockquote>
+<p>请求发出之前后者响应被then或catch处理前拦截他们做预处理</p>
+</blockquote>
+<pre class="line-numbers language-js" data-language="js"><code class="language-js"><span class="token comment">//axiosInstance为自定义实例</span>
+axiosInstance<span class="token punctuation">.</span>interceptors<span class="token punctuation">.</span>response<span class="token punctuation">.</span><span class="token function">use</span><span class="token punctuation">(</span>    <span class="token comment">//request类似</span>
+  <span class="token punctuation">(</span><span class="token parameter">res</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> res<span class="token punctuation">.</span>data<span class="token punctuation">,</span>
+  <span class="token punctuation">(</span><span class="token parameter">err</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+    console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span>err<span class="token punctuation">,</span> <span class="token string">"网络错误"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<blockquote>
+<p>可以在稍后移除拦截器</p>
+</blockquote>
+<pre class="line-numbers language-js" data-language="js"><code class="language-js"><span class="token keyword">var</span> myInterceptor <span class="token operator">=</span> axios<span class="token punctuation">.</span>interceptors<span class="token punctuation">.</span>request<span class="token punctuation">.</span><span class="token function">use</span><span class="token punctuation">(</span><span class="token keyword">function</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span><span class="token comment">/*...*/</span><span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+axios<span class="token punctuation">.</span>interceptors<span class="token punctuation">.</span>request<span class="token punctuation">.</span><span class="token function">eject</span><span class="token punctuation">(</span>myInterceptor<span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+<h3 id="fetch"><a href="#fetch" class="headerlink" title="fetch"></a>fetch</h3><blockquote>
+<p>一个 基于promise设计的low-level API</p>
+<p>优点：实现关注点分离，输入，输出，事件跟踪分离</p>
+<p>缺点：不支持同步；只对网络请求报错，对400和500都当做成功请求，需要封装处理；</p>
+</blockquote>
+<h5 id="基本使用"><a href="#基本使用" class="headerlink" title="基本使用"></a><strong>基本使用</strong></h5><pre class="line-numbers language-js" data-language="js"><code class="language-js"><span class="token comment">//1.await调用</span>
+<span class="token keyword">let</span> response <span class="token operator">=</span> <span class="token keyword">await</span> <span class="token function">fetch</span><span class="token punctuation">(</span>url<span class="token punctuation">,</span> options<span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">// 解析 response header</span>
+<span class="token keyword">let</span> result <span class="token operator">=</span> <span class="token keyword">await</span> response<span class="token punctuation">.</span><span class="token function">json</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">// 将 body 读取为 json</span>
+
+<span class="token comment">//2.promise形式</span>
+<span class="token function">fetch</span><span class="token punctuation">(</span>url<span class="token punctuation">,</span> options<span class="token punctuation">)</span>
+  <span class="token punctuation">.</span><span class="token function">then</span><span class="token punctuation">(</span><span class="token parameter">response</span> <span class="token operator">=&gt;</span> response<span class="token punctuation">.</span><span class="token function">json</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+  <span class="token punctuation">.</span><span class="token function">then</span><span class="token punctuation">(</span><span class="token parameter">result</span> <span class="token operator">=&gt;</span> <span class="token comment">/* process result */</span><span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<ul>
+<li><strong>options</strong></li>
+</ul>
+<blockquote>
+<p>method：HTTP方法</p>
+<p>headers：一个对象（不是所有的header都可以编写）</p>
+<p>body：post等方法时才有请求体</p>
+<ul>
+<li>字符串（例如 JSON 编码的），</li>
+<li><code>FormData</code> 对象，以 <code>form/multipart</code> 形式发送数据</li>
+<li><code>Blob</code>/<code>BufferSource</code> 发送二进制数据，</li>
+<li>URLSearchParams，以 <code>x-www-form-urlencoded</code> 编码形式发送数据，很少使用。</li>
+</ul>
+</blockquote>
+<ul>
+<li><strong>response</strong></li>
+</ul>
+<blockquote>
+<p><strong>响应属性</strong>：status，ok（状态码为2XX即为，true），headers（类似于map的对象）</p>
+<p><strong>响应体：</strong>只能获取一次！！</p>
+<ul>
+<li><strong><code>response.text()</code></strong> —— 读取 response，并以文本形式返回 response，</li>
+<li><strong><code>response.json()</code></strong> —— 将 response 解析为 JSON 对象形式，</li>
+<li><strong><code>response.formData()</code></strong> —— 以 <code>FormData</code> 对象（form/multipart 编码，参见下一章）的形式返回 response，</li>
+<li><strong><code>response.blob()</code></strong> —— 以 <a target="_blank" rel="noopener" href="https://zh.javascript.info/blob">Blob</a>（具有类型的二进制数据）形式返回 response，</li>
+<li><strong><code>response.arrayBuffer()</code></strong> —— 以 <a target="_blank" rel="noopener" href="https://zh.javascript.info/arraybuffer-binary-arrays">ArrayBuffer</a>（低级别的二进制数据）形式返回 response。</li>
+</ul>
+</blockquote>
+<h5 id="实例：上传图片"><a href="#实例：上传图片" class="headerlink" title="实例：上传图片"></a>实例：上传图片</h5><blockquote>
+<p>使用Blob对象通过fetch提交二进制数据，<code>&lt;canvas&gt;</code>作为画布</p>
+</blockquote>
+<pre class="line-numbers language-html" data-language="html"><code class="language-html"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>body</span><span class="token style-attr language-css"><span class="token attr-name"> <span class="token attr-name">style</span></span><span class="token punctuation">="</span><span class="token attr-value"><span class="token property">margin</span><span class="token punctuation">:</span>0</span><span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span>
+  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>canvas</span> <span class="token attr-name">id</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>canvasElem<span class="token punctuation">"</span></span> <span class="token attr-name">width</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>100<span class="token punctuation">"</span></span> <span class="token attr-name">height</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>80<span class="token punctuation">"</span></span><span class="token style-attr language-css"><span class="token attr-name"> <span class="token attr-name">style</span></span><span class="token punctuation">="</span><span class="token attr-value"><span class="token property">border</span><span class="token punctuation">:</span>1px solid</span><span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>canvas</span><span class="token punctuation">&gt;</span></span>
+
+  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>input</span> <span class="token attr-name">type</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>button<span class="token punctuation">"</span></span> <span class="token attr-name">value</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>Submit<span class="token punctuation">"</span></span> <span class="token attr-name">onclick</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>submit()<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span>
+
+  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>script</span><span class="token punctuation">&gt;</span></span><span class="token script"><span class="token language-javascript">
+    canvasElem<span class="token punctuation">.</span><span class="token function-variable function">onmousemove</span> <span class="token operator">=</span> <span class="token keyword">function</span><span class="token punctuation">(</span><span class="token parameter">e</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token keyword">let</span> ctx <span class="token operator">=</span> canvasElem<span class="token punctuation">.</span><span class="token function">getContext</span><span class="token punctuation">(</span><span class="token string">'2d'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+      ctx<span class="token punctuation">.</span><span class="token function">lineTo</span><span class="token punctuation">(</span>e<span class="token punctuation">.</span>clientX<span class="token punctuation">,</span> e<span class="token punctuation">.</span>clientY<span class="token punctuation">)</span><span class="token punctuation">;</span>
+      ctx<span class="token punctuation">.</span><span class="token function">stroke</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span><span class="token punctuation">;</span>
+
+    <span class="token keyword">async</span> <span class="token keyword">function</span> <span class="token function">submit</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token keyword">let</span> blob <span class="token operator">=</span> <span class="token keyword">await</span> <span class="token keyword">new</span> <span class="token class-name">Promise</span><span class="token punctuation">(</span><span class="token parameter">resolve</span> <span class="token operator">=&gt;</span> canvasElem<span class="token punctuation">.</span><span class="token function">toBlob</span><span class="token punctuation">(</span>resolve<span class="token punctuation">,</span> <span class="token string">'image/png'</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token keyword">let</span> response <span class="token operator">=</span> <span class="token keyword">await</span> <span class="token function">fetch</span><span class="token punctuation">(</span><span class="token string">'/article/fetch/post/image'</span><span class="token punctuation">,</span> <span class="token punctuation">{</span>
+        method<span class="token operator">:</span> <span class="token string">'POST'</span><span class="token punctuation">,</span>
+        body<span class="token operator">:</span> blob
+      <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+      <span class="token comment">// 服务器给出确认信息和图片大小作为响应</span>
+      <span class="token keyword">let</span> result <span class="token operator">=</span> <span class="token keyword">await</span> response<span class="token punctuation">.</span><span class="token function">json</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token function">alert</span><span class="token punctuation">(</span>result<span class="token punctuation">.</span>message<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+  </span></span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>script</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>body</span><span class="token punctuation">&gt;</span></span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<img data-src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAAEsCAMAAABOo35HAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAAC9UExURVlZWdPT07KysmRkZIWFhfT09JmZmWZmZm9vb39/fxkZGUxMTDMzM3p6epCQkKamppubm729venp6cjIyN7e3tbW1s/Pz8LCwnx8fLS0tFZWVoiIiI+Pj6GhoeTk5Glpabu7u93d3evr66CgoJSUlKqqqsnJyeDg4Hd3d8PDw+Xl5bi4uNHR0dvb26Ojo6urq+fn51hYWDg4OCgoKHBwcK2traenp0FBQe7u7vHx8U5OTre3t8zMzHV1df///7GrnpQAAAA/dFJOU///////////////////////////////////////////////////////////////////////////////////AI4mfBcAAAUGSURBVHja7NoJb6M4GMZxY0NCD64kve/pMZ2d3Z297+X7f6zFNmBAMUXa6URl/q9UJSWPUPzrizFWRUlNLgEBWGCBBRZYYEEAFlhggQUWWBCABRZYYIEFFgRggQUWWGCBBQFYYIEFFlhgQQAWWGCBBRZYEIAFFlhggQUWBGCBBRZYYIEFAVhggQUWWGBBABZYYIEFFlgQgAUWWGCBBRYEYIEFFlhggQUBWGCBBRZYYEEAFlhggQUWWBCABRZYYIEFFgRggQUWWGCBBQFYYIEFFlhgQQAWWGCBBRZYEIAFFlhggQUWBGCBBRZYn6cCIcRXgvX/h9qcIVBqDdbEM8RCxGCB9QqXYRwHYDHBgwXWl8eKZKiESHI3Ba1kWs3fKixcaJUl1YyeBm7Ocq+yLItUiVBGnXxenSHJolIKEcwHq6ikbOX1YGVzQCTN8LPmSLreghUl9sN4Uw7yajMrLC0TZ1ImzqY6FEop0+pIaEN5HaoOxVuwEqFyc4I46uSlzOLqgxlh6UaR9l3VYWl9Fdoxb1Q90KJtu41pwwFW/WHhTtW8i7TafLCqRsk6bsGw63L9qurXRmuIlbT9lDQnlXU+nBFW1Q2qnZbDprWa2tjR90LZFqx1/+Td/HpGWLlrLDvIwTcx6dQ1Vrntbig68cDms3JwbA5Y1azs1ger6sNV/bbIw1jU81MvNAGrl58RVn8ozW+btF08iGFoAlYvP3csfVur1gJBEIA1uBmue5dhZDOyO2epbmgCVi8/I6x0MMHH9pjsTfBhNzQBq5uPZoQlB0uH3DZG4EZqQ26fL3sZq5uf09Ih6qw3i/pm6BZO0qZX7rrUS68Xsbr5ZE4rePMk08pk9aUZugfqppvs6AM1Acvlo/StP+6EbW06z8hJqxbYp2BZPQUnFsLsKuhQdaHqn5ewbF7KXIn0jWO5MqOQ7RaNLPtbNMmmhimj0GUmYLl8Gs0Lq4wyPbTu1l2QKqHSouzs3OlDIslW5SQsnY/NXmFplyNvEuuLV/Tau9BzwiraDUSwXmysztYWWNtL1psXeumgIrDGaqXvBfUuvtqUYI3V2t1wk1e2msFluJJm6zDJXv/fIfjPP7DAAgsssCiwwAILLLDAosACCyywwAKLAgsssMACC6zt9fDz/v75tyOB+98PD2+ORgKffjw4OP1uJPDxl+Xy8v1I4MPF3t7VNyOB4/vF4uzdzrG+39f1kz/w66Guv/yBvw90KX/gZKkr8Qf+2dOV+gNHC12/7RxrabD2/a31bLAO/a11YbAO/K21MFhLf2s9Gqw9f2vdGqzFu11jnVusE2/gxmI9eQOnFuvYG7i0WH7uK4t15w2cWazrXWP9a7H8f/bQYvm/6IPF+sF/pVssf19Ii/WH/0K2WH/uGuvEWC39gSdj9Twy+Rqri5EZx1gt/IE7Y/XoD1wbq9vd3w1PlufnD2OBp+ebm/uxwPHF6emnscDR4vLy41jg7vHq6sNY4Pr27OyYdRaLUrDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssL6u+k+AAQCR9eHtLKvLfwAAAABJRU5ErkJggg==" data-original="/2020/10/29/ajax-fetch-axios/image-20210331151953251.png" class="" title="cavans">
+
+<blockquote>
+<p>注：没有手动设置content/type，因为Bolb对象通过toBlob生成带有，”image/png”，这个类型就是content-type值</p>
+</blockquote>
+<pre class="line-numbers language-js" data-language="js"><code class="language-js"><span class="token comment">//promise改写</span>
+<span class="token keyword">function</span> <span class="token function">submit</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  canvasElem<span class="token punctuation">.</span><span class="token function">toBlob</span><span class="token punctuation">(</span><span class="token keyword">function</span><span class="token punctuation">(</span><span class="token parameter">blob</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token function">fetch</span><span class="token punctuation">(</span><span class="token string">'/article/fetch/post/image'</span><span class="token punctuation">,</span> <span class="token punctuation">{</span>
+      method<span class="token operator">:</span> <span class="token string">'POST'</span><span class="token punctuation">,</span>
+      body<span class="token operator">:</span> blob
+    <span class="token punctuation">}</span><span class="token punctuation">)</span>
+      <span class="token punctuation">.</span><span class="token function">then</span><span class="token punctuation">(</span><span class="token parameter">response</span> <span class="token operator">=&gt;</span> response<span class="token punctuation">.</span><span class="token function">json</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+      <span class="token punctuation">.</span><span class="token function">then</span><span class="token punctuation">(</span><span class="token parameter">result</span> <span class="token operator">=&gt;</span> <span class="token function">alert</span><span class="token punctuation">(</span><span class="token constant">JSON</span><span class="token punctuation">.</span><span class="token function">stringify</span><span class="token punctuation">(</span>result<span class="token punctuation">,</span> <span class="token keyword">null</span><span class="token punctuation">,</span> <span class="token number">2</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+  <span class="token punctuation">}</span><span class="token punctuation">,</span> <span class="token string">'image/png'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h5 id="实例：fetch-github用户信息"><a href="#实例：fetch-github用户信息" class="headerlink" title="实例：fetch github用户信息"></a>实例：fetch github用户信息</h5><blockquote>
+<p>要获取一个用户，我们需要：<code>fetch('https://api.github.com/users/USERNAME')</code>.</p>
+<p>如果响应的状态码是 <code>200</code>，则调用 <code>.json()</code> 来读取 JS 对象。</p>
+<p>否则，如果 <code>fetch</code> 失败，或者响应的状态码不是 <code>200</code>，我们只需要向结果数组返回 <code>null</code> 即可</p>
+</blockquote>
+<pre class="line-numbers language-js" data-language="js"><code class="language-js"><span class="token keyword">async</span> <span class="token keyword">function</span> <span class="token function">getUsers</span><span class="token punctuation">(</span><span class="token parameter">names</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token keyword">let</span> jobs <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+
+  <span class="token keyword">for</span><span class="token punctuation">(</span><span class="token keyword">let</span> name <span class="token keyword">of</span> names<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">let</span> job <span class="token operator">=</span> <span class="token function">fetch</span><span class="token punctuation">(</span><span class="token template-string"><span class="token template-punctuation string">`</span><span class="token string">https://api.github.com/users/</span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">${</span>name<span class="token interpolation-punctuation punctuation">}</span></span><span class="token template-punctuation string">`</span></span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">then</span><span class="token punctuation">(</span>
+      <span class="token parameter">successResponse</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>successResponse<span class="token punctuation">.</span>status <span class="token operator">!=</span> <span class="token number">200</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+          <span class="token keyword">return</span> <span class="token keyword">null</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span>
+          <span class="token keyword">return</span> successResponse<span class="token punctuation">.</span><span class="token function">json</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+      <span class="token punctuation">}</span><span class="token punctuation">,</span>
+      <span class="token parameter">failResponse</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+        <span class="token keyword">return</span> <span class="token keyword">null</span><span class="token punctuation">;</span>
+      <span class="token punctuation">}</span>
+    <span class="token punctuation">)</span><span class="token punctuation">;</span>
+    jobs<span class="token punctuation">.</span><span class="token function">push</span><span class="token punctuation">(</span>job<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+
+  <span class="token keyword">let</span> results <span class="token operator">=</span> <span class="token keyword">await</span> Promise<span class="token punctuation">.</span><span class="token function">all</span><span class="token punctuation">(</span>jobs<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+  <span class="token keyword">return</span> results<span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<blockquote>
+<p>这里使用Promise.all确保都resolve结束再返回；直接.then而不是在Promise.all中实现，使得json解析不需要累计解决，提升效率。</p>
+</blockquote>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E7%BD%91%E7%BB%9C%E8%AF%B7%E6%B1%82/" rel="tag"><i class="fa fa-tag"></i> 网络请求</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/10/24/react-shi-jian-ru-men/" rel="prev" title="react实践入门">
+      <i class="fa fa-chevron-left"></i> react实践入门
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/10/29/shu-ju-lei-xing/" rel="next" title="数据类型">
+      数据类型 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="lv-container" data-id="city" data-uid="MTAyMC81MTYzMS8yODExMg=="></div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#javascript%E7%9A%84Ajax"><span class="nav-number">1.</span> <span class="nav-text">javascript的Ajax</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95"><span class="nav-number">1.0.1.</span> <span class="nav-text">使用方法</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%90%AF%E5%8A%A8%E8%AF%B7%E6%B1%82"><span class="nav-number">1.0.2.</span> <span class="nav-text">启动请求</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%9B%91%E5%90%AC%E8%AF%B7%E6%B1%82"><span class="nav-number">1.0.3.</span> <span class="nav-text">监听请求</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%AE%8C%E6%95%B4%E7%A4%BA%E4%BE%8B"><span class="nav-number">1.0.4.</span> <span class="nav-text">完整示例</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%93%8D%E5%BA%94%E7%B1%BB%E5%9E%8B"><span class="nav-number">1.0.5.</span> <span class="nav-text">响应类型</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%BB%88%E6%AD%A2%E8%AF%B7%E6%B1%82"><span class="nav-number">1.0.6.</span> <span class="nav-text">终止请求</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%90%8C%E6%AD%A5%E8%AF%B7%E6%B1%82"><span class="nav-number">1.0.7.</span> <span class="nav-text">同步请求</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#HTTP-Header"><span class="nav-number">1.0.8.</span> <span class="nav-text">HTTP-Header</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%8E%B7%E5%8F%96header%E5%AF%B9%E8%B1%A1"><span class="nav-number">1.0.9.</span> <span class="nav-text">获取header对象</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#POST%EF%BC%8CFormData"><span class="nav-number">1.0.10.</span> <span class="nav-text">POST，FormData</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%B8%8A%E4%BC%A0%E8%BF%9B%E5%BA%A6"><span class="nav-number">1.0.11.</span> <span class="nav-text">上传进度</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#jQuery%E7%9A%84Ajax"><span class="nav-number">2.</span> <span class="nav-text">jQuery的Ajax</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Axios"><span class="nav-number">3.</span> <span class="nav-text">Axios</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%AE%BE%E7%BD%AE%E5%85%A8%E5%B1%80axios%E9%BB%98%E8%AE%A4%E5%80%BC"><span class="nav-number">3.0.1.</span> <span class="nav-text">设置全局axios默认值</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#get%E8%AF%B7%E6%B1%82%E4%B8%89%E7%A7%8D%E6%96%B9%E6%B3%95"><span class="nav-number">3.0.2.</span> <span class="nav-text">get请求三种方法</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#post%E8%AF%B7%E6%B1%82%E4%B8%A4%E7%A7%8D%E6%96%B9%E6%B3%95"><span class="nav-number">3.0.3.</span> <span class="nav-text">post请求两种方法</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%B9%B6%E5%8F%91%E8%AF%B7%E6%B1%82"><span class="nav-number">3.0.4.</span> <span class="nav-text">并发请求</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E5%AE%9E%E4%BE%8B"><span class="nav-number">3.0.5.</span> <span class="nav-text">创建实例</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%8B%A6%E6%88%AA%E5%99%A8"><span class="nav-number">3.0.6.</span> <span class="nav-text">拦截器</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#fetch"><span class="nav-number">4.</span> <span class="nav-text">fetch</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8"><span class="nav-number">4.0.1.</span> <span class="nav-text">基本使用</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%AE%9E%E4%BE%8B%EF%BC%9A%E4%B8%8A%E4%BC%A0%E5%9B%BE%E7%89%87"><span class="nav-number">4.0.2.</span> <span class="nav-text">实例：上传图片</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%AE%9E%E4%BE%8B%EF%BC%9Afetch-github%E7%94%A8%E6%88%B7%E4%BF%A1%E6%81%AF"><span class="nav-number">4.0.3.</span> <span class="nav-text">实例：fetch github用户信息</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="忞月"
+      src="/./images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">忞月</p>
+  <div class="site-description" itemprop="description">直到这一刻微笑着说话为止，我至少留下了一公升眼泪</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">27</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/minyue-hcm" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;minyue-hcm" rel="noopener" target="_blank"><i class="fa fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">忞月</span>
+</div>
+<!--
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+-->
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script size="300" alpha="0.6" zIndex="-1" src="/lib/canvas-ribbon/canvas-ribbon.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/three-waves.min.js"></script>
+    <script defer src="/lib/three/canvas_lines.min.js"></script>
+    <script defer src="/lib/three/canvas_sphere.min.js"></script>
+
+
+  
+  <script>
+    (function(){
+      var canonicalURL, curProtocol;
+      //Get the <link> tag
+      var x=document.getElementsByTagName("link");
+		//Find the last canonical URL
+		if(x.length > 0){
+			for (i=0;i<x.length;i++){
+				if(x[i].rel.toLowerCase() == 'canonical' && x[i].href){
+					canonicalURL=x[i].href;
+				}
+			}
+		}
+    //Get protocol
+	    if (!canonicalURL){
+	    	curProtocol = window.location.protocol.split(':')[0];
+	    }
+	    else{
+	    	curProtocol = canonicalURL.split(':')[0];
+	    }
+      //Get current URL if the canonical URL does not exist
+	    if (!canonicalURL) canonicalURL = window.location.href;
+	    //Assign script content. Replace current URL with the canonical URL
+      !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=canonicalURL,t=document.referrer;if(!e.test(r)){var n=(String(curProtocol).toLowerCase() === 'https')?"https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif":"//api.share.baidu.com/s.gif";t?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var i=new Image;i.src=n}}(window);})();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+<script>
+NexT.utils.loadComments(document.querySelector('#lv-container'), () => {
+  window.livereOptions = {
+    refer: location.pathname.replace(CONFIG.root, '').replace('index.html', '')
+  };
+  (function(d, s) {
+    var j, e = d.getElementsByTagName(s)[0];
+    if (typeof LivereTower === 'function') { return; }
+    j = d.createElement(s);
+    j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+    j.async = true;
+    e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+});
+</script>
+
+<script>
+            window.imageLazyLoadSetting = {
+                isSPA: false,
+                processImages: null,
+            };
+        </script><script>window.addEventListener("load",function(){var t=/\.(gif|jpg|jpeg|tiff|png)$/i,r=/^data:image\/[a-z]+;base64,/;Array.prototype.slice.call(document.querySelectorAll("img[data-original]")).forEach(function(a){var e=a.parentNode;"A"===e.tagName&&(e.href.match(t)||e.href.match(r))&&(e.href=a.dataset.original)})});</script><script>!function(n){n.imageLazyLoadSetting.processImages=i;var e=n.imageLazyLoadSetting.isSPA,r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]"));function i(){e&&(r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]")));for(var t,a=0;a<r.length;a++)0<=(t=(t=r[a]).getBoundingClientRect()).bottom&&0<=t.left&&t.top<=(n.innerHeight||document.documentElement.clientHeight)&&function(){var t,e,n,i,o=r[a];t=o,e=function(){r=r.filter(function(t){return o!==t})},n=new Image,i=t.getAttribute("data-original"),n.onload=function(){t.src=i,e&&e()},n.src=i}()}i(),n.addEventListener("scroll",function(){var t,e;t=i,e=n,clearTimeout(t.tId),t.tId=setTimeout(function(){t.call(e)},500)})}(this);</script></body>
+</html>

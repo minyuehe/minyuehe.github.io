@@ -327,6 +327,87 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://mimyue-hcm.github.io/2020/11/25/hook-xue-xi/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/./images/avatar.jpg">
+      <meta itemprop="name" content="忞月">
+      <meta itemprop="description" content="直到这一刻微笑着说话为止，我至少留下了一公升眼泪">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="忞月の博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/11/25/hook-xue-xi/" class="post-title-link" itemprop="url">火车票项目</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-11-25 18:54:37" itemprop="dateCreated datePublished" datetime="2020-11-25T18:54:37+08:00">2020-11-25</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-03-27 16:26:53" itemprop="dateModified" datetime="2021-03-27T16:26:53+08:00">2021-03-27</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/React/" itemprop="url" rel="index"><span itemprop="name">React</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="hook"><a href="#hook" class="headerlink" title="hook"></a>hook</h1>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2020/11/25/hook-xue-xi/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://mimyue-hcm.github.io/2020/11/10/css-module/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -573,7 +654,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://mimyue-hcm.github.io/2020/10/29/ajax/">
+    <link itemprop="mainEntityOfPage" href="http://mimyue-hcm.github.io/2020/10/29/ajax-fetch-axios/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/./images/avatar.jpg">
@@ -587,7 +668,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2020/10/29/ajax/" class="post-title-link" itemprop="url">Ajax</a>
+            <a href="/2020/10/29/ajax-fetch-axios/" class="post-title-link" itemprop="url">Ajax,fetch,axios</a>
         </h2>
 
         <div class="post-meta">
@@ -604,7 +685,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-03-27 16:26:10" itemprop="dateModified" datetime="2021-03-27T16:26:10+08:00">2021-03-27</time>
+                <time title="修改时间：2021-03-31 16:58:58" itemprop="dateModified" datetime="2021-03-31T16:58:58+08:00">2021-03-31</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -627,12 +708,85 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <ul>
-<li>Ajax是一种无需重新加载整个网页的情况下，能够更新部分网页的技术</li>
+          <h3 id="javascript的Ajax"><a href="#javascript的Ajax" class="headerlink" title="javascript的Ajax"></a>javascript的Ajax</h3><ul>
+<li>Ajax的全称是Asynchronous JavaScript and XML，意思就是用JavaScript执行异步网络请求，而不需要重载（刷新）整个页面。</li>
+<li>Ajax使用XMLHttpRequest对象取得新数据，然后再通过 DOM 将新数据插入到页面中。也就是无需刷新即可从服务器获取数据</li>
 </ul>
+<h5 id="使用方法"><a href="#使用方法" class="headerlink" title="使用方法"></a><strong>使用方法</strong></h5><blockquote>
+<p>对于IE7+和其他浏览器，直接使用XML对象，IE6以前使用ActiveXObject对象</p>
+</blockquote>
+<pre class="line-numbers language-js" data-language="js"><code class="language-js"><span class="token keyword">var</span> xhr<span class="token punctuation">;</span>
+<span class="token keyword">if</span><span class="token punctuation">(</span>window<span class="token punctuation">.</span>XMLHttpRquest<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  xhr <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">XMLHttpRequest</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span>
+  xhr <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">ActiveXObject</span><span class="token punctuation">(</span><span class="token string">'Microsoft.XMLHTTP'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h5 id="启动请求"><a href="#启动请求" class="headerlink" title="启动请求"></a><strong>启动请求</strong></h5><pre class="line-numbers language-js" data-language="js"><code class="language-js">xhr<span class="token punctuation">.</span><span class="token function">open</span><span class="token punctuation">(</span>method<span class="token punctuation">,</span> url<span class="token punctuation">,</span> boolean<span class="token punctuation">)</span><span class="token punctuation">;</span>
+xhr<span class="token punctuation">.</span><span class="token function">send</span><span class="token punctuation">(</span><span class="token punctuation">[</span>body<span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+<blockquote>
+<p>method:请求方法：post，get等</p>
+<p>url：请求链接，只能向同源url发送</p>
+<p>boolean：是否异步，默认true（异步）</p>
+<p>body:包含request.body比如post要使用请求体，get方法填null或不填</p>
+<p>注意：调用open并不会真正发送请求，只是启动一个请求以备发送</p>
+</blockquote>
+<h5 id="监听请求"><a href="#监听请求" class="headerlink" title="监听请求"></a><strong>监听请求</strong></h5><blockquote>
+<p>load—请求完成（HTTP状态为400或500），并且响应已完全下载</p>
+<p>error—当无法送出请求，如网络中断，无效URl</p>
+<p>progress—在下载响应期间定期触发，报告下载了多少</p>
+</blockquote>
+<pre class="line-numbers language-js" data-language="js"><code class="language-js">xhr<span class="token punctuation">.</span><span class="token function-variable function">onload</span> <span class="token operator">=</span> <span class="token keyword">function</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token function">alert</span><span class="token punctuation">(</span><span class="token template-string"><span class="token template-punctuation string">`</span><span class="token string">Loaded: </span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">${</span>xhr<span class="token punctuation">.</span>status<span class="token interpolation-punctuation punctuation">}</span></span><span class="token string"> </span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">${</span>xhr<span class="token punctuation">.</span>response<span class="token interpolation-punctuation punctuation">}</span></span><span class="token template-punctuation string">`</span></span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">;</span>
+
+xhr<span class="token punctuation">.</span><span class="token function-variable function">onerror</span> <span class="token operator">=</span> <span class="token keyword">function</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span> <span class="token comment">// 仅在根本无法发出请求时触发</span>
+  <span class="token function">alert</span><span class="token punctuation">(</span><span class="token template-string"><span class="token template-punctuation string">`</span><span class="token string">Network Error</span><span class="token template-punctuation string">`</span></span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">;</span>
+
+xhr<span class="token punctuation">.</span><span class="token function-variable function">onprogress</span> <span class="token operator">=</span> <span class="token keyword">function</span><span class="token punctuation">(</span><span class="token parameter">event</span><span class="token punctuation">)</span> <span class="token punctuation">{</span> <span class="token comment">// 定期触发</span>
+  <span class="token comment">// event.loaded —— 已经下载了多少字节</span>
+  <span class="token comment">// event.lengthComputable = true，当服务器发送了 Content-Length header 时</span>
+  <span class="token comment">// event.total —— 总字节数（如果 lengthComputable 为 true）</span>
+  <span class="token function">alert</span><span class="token punctuation">(</span><span class="token template-string"><span class="token template-punctuation string">`</span><span class="token string">Received </span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">${</span>event<span class="token punctuation">.</span>loaded<span class="token interpolation-punctuation punctuation">}</span></span><span class="token string"> of </span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">${</span>event<span class="token punctuation">.</span>total<span class="token interpolation-punctuation punctuation">}</span></span><span class="token template-punctuation string">`</span></span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<blockquote>
+<p>status: HTTP状态码，200,404,403等，非HTTP错误为0；</p>
+<p>statusText：状态信息，200状态码对应OK；404对应Not Found；403对应Forbidden</p>
+<p>response：旧版本为responseText，服务器响应体</p>
+</blockquote>
+<p>我们还可以指定<strong>超时</strong></p>
+<pre class="line-numbers language-none"><code class="language-none">xhr.timeout = 10000; //timeout单位是ms<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>URL搜索参数（确保正确编码）</p>
+<pre class="line-numbers language-js" data-language="js"><code class="language-js"><span class="token keyword">let</span> url <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">URL</span><span class="token punctuation">(</span><span class="token string">'https://google.com/search'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+url<span class="token punctuation">.</span>searchParams<span class="token punctuation">.</span><span class="token function">set</span><span class="token punctuation">(</span><span class="token string">'q'</span><span class="token punctuation">,</span><span class="token string">'test me!'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment">//编码</span>
+xhr<span class="token punctuation">.</span><span class="token function">open</span><span class="token punctuation">(</span><span class="token string">'GET'</span><span class="token punctuation">,</span> url<span class="token punctuation">)</span><span class="token punctuation">;</span><span class="token comment">//https://google.com/search?q=test+me%21</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p><strong>readyState</strong></p>
+<p>xml的状态由 <code>0</code> → <code>1</code> → <code>2</code> → <code>3</code> → … → <code>3</code> → <code>4</code> 通过网络接收到一个数据包就重复一次状态<code>3</code></p>
+<pre class="line-numbers language-js" data-language="js"><code class="language-js"><span class="token constant">UNSENT</span> <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span> <span class="token comment">// 初始状态</span>
+<span class="token constant">OPENED</span> <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span> <span class="token comment">// open 被调用</span>
+<span class="token constant">HEADERS_RECEIVED</span> <span class="token operator">=</span> <span class="token number">2</span><span class="token punctuation">;</span> <span class="token comment">// 接收到 response header</span>
+<span class="token constant">LOADING</span> <span class="token operator">=</span> <span class="token number">3</span><span class="token punctuation">;</span> <span class="token comment">// 响应正在被加载（接收到一个数据包）</span>
+<span class="token constant">DONE</span> <span class="token operator">=</span> <span class="token number">4</span><span class="token punctuation">;</span> <span class="token comment">// 请求完成</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<pre class="line-numbers language-js" data-language="js"><code class="language-js"><span class="token comment">//以前的监听事件就是这样实现的；现在被load，error，progress代替</span>
+xhr<span class="token punctuation">.</span><span class="token function-variable function">onreadystatechange</span> <span class="token operator">=</span> <span class="token keyword">function</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token keyword">if</span><span class="token punctuation">(</span>xhr<span class="token punctuation">.</span>readyState <span class="token operator">===</span> <span class="token number">3</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token comment">//加载中</span>
+  <span class="token punctuation">}</span>
+  <span class="token keyword">if</span><span class="token punctuation">(</span>xhr<span class="token punctuation">.</span>readyState <span class="token operator">===</span> <span class="token number">4</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token comment">//请求完成</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2020/10/29/ajax/#more" rel="contents">
+              <a class="btn" href="/2020/10/29/ajax-fetch-axios/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -1306,97 +1460,6 @@ admin<span class="token punctuation">.</span>fullName <span class="token operato
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://mimyue-hcm.github.io/2020/07/23/git-cao-zuo/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/./images/avatar.jpg">
-      <meta itemprop="name" content="忞月">
-      <meta itemprop="description" content="直到这一刻微笑着说话为止，我至少留下了一公升眼泪">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="忞月の博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/07/23/git-cao-zuo/" class="post-title-link" itemprop="url">git_操作</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-07-23 08:47:58" itemprop="dateCreated datePublished" datetime="2020-07-23T08:47:58+08:00">2020-07-23</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-03-27 16:26:32" itemprop="dateModified" datetime="2021-03-27T16:26:32+08:00">2021-03-27</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E7%BD%91%E7%AB%99%E9%83%A8%E7%BD%B2/" itemprop="url" rel="index"><span itemprop="name">网站部署</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="git和github"><a href="#git和github" class="headerlink" title="git和github"></a>git和github</h1><h2 id="（一）Git基础"><a href="#（一）Git基础" class="headerlink" title="（一）Git基础"></a>（一）Git基础</h2><h3 id="Git基本工作流程"><a href="#Git基本工作流程" class="headerlink" title="Git基本工作流程"></a>Git基本工作流程</h3><blockquote>
-<img data-src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAAEsCAMAAABOo35HAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAAC9UExURVlZWdPT07KysmRkZIWFhfT09JmZmWZmZm9vb39/fxkZGUxMTDMzM3p6epCQkKamppubm729venp6cjIyN7e3tbW1s/Pz8LCwnx8fLS0tFZWVoiIiI+Pj6GhoeTk5Glpabu7u93d3evr66CgoJSUlKqqqsnJyeDg4Hd3d8PDw+Xl5bi4uNHR0dvb26Ojo6urq+fn51hYWDg4OCgoKHBwcK2traenp0FBQe7u7vHx8U5OTre3t8zMzHV1df///7GrnpQAAAA/dFJOU///////////////////////////////////////////////////////////////////////////////////AI4mfBcAAAUGSURBVHja7NoJb6M4GMZxY0NCD64kve/pMZ2d3Z297+X7f6zFNmBAMUXa6URl/q9UJSWPUPzrizFWRUlNLgEBWGCBBRZYYEEAFlhggQUWWBCABRZYYIEFFgRggQUWWGCBBQFYYIEFFlhgQQAWWGCBBRZYEIAFFlhggQUWBGCBBRZYYIEFAVhggQUWWGBBABZYYIEFFlgQgAUWWGCBBRYEYIEFFlhggQUBWGCBBRZYYEEAFlhggQUWWBCABRZYYIEFFgRggQUWWGCBBQFYYIEFFlhgQQAWWGCBBRZYEIAFFlhggQUWBGCBBRZYn6cCIcRXgvX/h9qcIVBqDdbEM8RCxGCB9QqXYRwHYDHBgwXWl8eKZKiESHI3Ba1kWs3fKixcaJUl1YyeBm7Ocq+yLItUiVBGnXxenSHJolIKEcwHq6ikbOX1YGVzQCTN8LPmSLreghUl9sN4Uw7yajMrLC0TZ1ImzqY6FEop0+pIaEN5HaoOxVuwEqFyc4I46uSlzOLqgxlh6UaR9l3VYWl9Fdoxb1Q90KJtu41pwwFW/WHhTtW8i7TafLCqRsk6bsGw63L9qurXRmuIlbT9lDQnlXU+nBFW1Q2qnZbDprWa2tjR90LZFqx1/+Td/HpGWLlrLDvIwTcx6dQ1Vrntbig68cDms3JwbA5Y1azs1ger6sNV/bbIw1jU81MvNAGrl58RVn8ozW+btF08iGFoAlYvP3csfVur1gJBEIA1uBmue5dhZDOyO2epbmgCVi8/I6x0MMHH9pjsTfBhNzQBq5uPZoQlB0uH3DZG4EZqQ26fL3sZq5uf09Ih6qw3i/pm6BZO0qZX7rrUS68Xsbr5ZE4rePMk08pk9aUZugfqppvs6AM1Acvlo/StP+6EbW06z8hJqxbYp2BZPQUnFsLsKuhQdaHqn5ewbF7KXIn0jWO5MqOQ7RaNLPtbNMmmhimj0GUmYLl8Gs0Lq4wyPbTu1l2QKqHSouzs3OlDIslW5SQsnY/NXmFplyNvEuuLV/Tau9BzwiraDUSwXmysztYWWNtL1psXeumgIrDGaqXvBfUuvtqUYI3V2t1wk1e2msFluJJm6zDJXv/fIfjPP7DAAgsssCiwwAILLLDAosACCyywwAKLAgsssMACC6zt9fDz/v75tyOB+98PD2+ORgKffjw4OP1uJPDxl+Xy8v1I4MPF3t7VNyOB4/vF4uzdzrG+39f1kz/w66Guv/yBvw90KX/gZKkr8Qf+2dOV+gNHC12/7RxrabD2/a31bLAO/a11YbAO/K21MFhLf2s9Gqw9f2vdGqzFu11jnVusE2/gxmI9eQOnFuvYG7i0WH7uK4t15w2cWazrXWP9a7H8f/bQYvm/6IPF+sF/pVssf19Ii/WH/0K2WH/uGuvEWC39gSdj9Twy+Rqri5EZx1gt/IE7Y/XoD1wbq9vd3w1PlufnD2OBp+ebm/uxwPHF6emnscDR4vLy41jg7vHq6sNY4Pr27OyYdRaLUrDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssL6u+k+AAQCR9eHtLKvLfwAAAABJRU5ErkJggg==" data-original="/2020/07/23/git-cao-zuo/git_%E6%93%8D%E4%BD%9C%E6%B5%81%E7%A8%8B.jpg" class="" title="git操作流程">
-
-<p>主要涉及到四个关键点：</p>
-<ol>
-<li>工作区：本地电脑存放项目文件的地方，比如my_work文件夹；</li>
-<li>暂存区（Index/Stage）：在使用git管理项目文件的时候，其本地的项目文件会多出一个.git的文件夹，将这个.git文件夹称之为版本库。其中.git文件夹中包含了两个部分，一个是暂存区（Index或者Stage）,顾名思义就是暂时存放文件的地方，通常使用add命令将工作区的文件添加到暂存区里；</li>
-<li>本地仓库：.git文件夹里还包括git自动创建的master分支，并且将HEAD指针指向master分支。使用commit命令可以将暂存区中的文件添加到本地仓库中；</li>
-<li>远程仓库：不是在本地仓库中，项目代码在远程git服务器上，比如项目放在github上，就是一个远程仓库，通常使用clone命令将远程仓库拷贝到本地仓库中，开发后推送到远程仓库中即可；</li>
-</ol>
-</blockquote>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/07/23/git-cao-zuo/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1468,7 +1531,7 @@ admin<span class="token punctuation">.</span>fullName <span class="token operato
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">26</span>
+          <span class="site-state-item-count">27</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1481,7 +1544,7 @@ admin<span class="token punctuation">.</span>fullName <span class="token operato
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">21</span>
+        <span class="site-state-item-count">22</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
