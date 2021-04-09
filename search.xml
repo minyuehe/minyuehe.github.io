@@ -1,6 +1,108 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>移动端适配</title>
+    <url>/2021/04/08/yi-dong-duan-gua-pei/</url>
+    <content><![CDATA[<h2 id="移动端适配方案"><a href="#移动端适配方案" class="headerlink" title="移动端适配方案"></a>移动端适配方案</h2><h3 id="适配前的问题"><a href="#适配前的问题" class="headerlink" title="适配前的问题"></a>适配前的问题</h3><ul>
+<li>每个设备的<strong>物理像素</strong>大小都是固定的，根据<strong>设备分辨率</strong>而定</li>
+<li>分辨率越来越大（物理像素越小），难道我们的图片显示就越来越小嘛？</li>
+</ul>
+<p>引出<strong>逻辑分辨率</strong>，设备像素比（<strong>dpr</strong>）</p>
+<ul>
+<li><strong>1px边框问题</strong>？不同浏览器不同</li>
+</ul>
+<blockquote>
+<p><strong>transform: scale(0.5) 方案</strong></p>
+</blockquote>
+<pre class="line-numbers language-js" data-language="js"><code class="language-js"><span class="token comment">/* 2倍屏 */</span>
+@media only screen <span class="token function">and</span> <span class="token punctuation">(</span><span class="token parameter"><span class="token operator">-</span>webkit<span class="token operator">-</span>min<span class="token operator">-</span>device<span class="token operator">-</span>pixel<span class="token operator">-</span>ratio<span class="token operator">:</span> <span class="token number">2.0</span></span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token punctuation">.</span>border<span class="token operator">-</span>bottom<span class="token operator">:</span><span class="token operator">:</span>after <span class="token punctuation">{</span>
+        <span class="token operator">-</span>webkit<span class="token operator">-</span>transform<span class="token operator">:</span> <span class="token function">scaleY</span><span class="token punctuation">(</span><span class="token number">0.5</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        transform<span class="token operator">:</span> <span class="token function">scaleY</span><span class="token punctuation">(</span><span class="token number">0.5</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">/* 3倍屏 */</span>
+@media only screen <span class="token function">and</span> <span class="token punctuation">(</span><span class="token parameter"><span class="token operator">-</span>webkit<span class="token operator">-</span>min<span class="token operator">-</span>device<span class="token operator">-</span>pixel<span class="token operator">-</span>ratio<span class="token operator">:</span> <span class="token number">3.0</span></span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token punctuation">.</span>border<span class="token operator">-</span>bottom<span class="token operator">:</span><span class="token operator">:</span>after <span class="token punctuation">{</span>
+        <span class="token operator">-</span>webkit<span class="token operator">-</span>transform<span class="token operator">:</span> <span class="token function">scaleY</span><span class="token punctuation">(</span><span class="token number">0.33</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        transform<span class="token operator">:</span> <span class="token function">scaleY</span><span class="token punctuation">(</span><span class="token number">0.33</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h3 id="适配"><a href="#适配" class="headerlink" title="适配"></a>适配</h3><ul>
+<li>移动端Web页面，即常说的H5页面、手机页面、webview页面</li>
+<li>在不同尺寸的手机设备上，页面“相对性的达到合理的展示（自适应）”或者“保持统一效果的等比缩放</li>
+</ul>
+<blockquote>
+<p>viewport(scale = 1/dpr)</p>
+<p>rem</p>
+<p>flex</p>
+<p>vm/vh</p>
+</blockquote>
+<h4 id="viewport"><a href="#viewport" class="headerlink" title="viewport"></a>viewport</h4><p>配置视口, 简单的一个meta标签即可！</p>
+<pre class="line-numbers language-html" data-language="html"><code class="language-html"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>meta</span> <span class="token attr-name">name</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>viewport<span class="token punctuation">"</span></span> <span class="token attr-name">content</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>width=device-width; initial-scale=1; maximum-scale=1; minimum-scale=1; user-scalable=no;<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<img data-src="/2021/04/08/yi-dong-duan-gua-pei/170e782c3e72b843" class="" title="img">
+
+<p>想要视觉效果好，视口宽度必定无限接近于理想视口。</p>
+<p>上述的meta设置，就是我们的理想设置，他规定了我们的视口宽度为屏幕宽度，初始缩放比例为1，就是初始时候我们的视觉视口就是理想视口！</p>
+<h4 id="解决适配方法"><a href="#解决适配方法" class="headerlink" title="解决适配方法"></a>解决适配方法</h4><h5 id="1-rem适配"><a href="#1-rem适配" class="headerlink" title="1.rem适配"></a>1.rem适配</h5><p>rem是CSS3新增的一个相对单位</p>
+<pre class="line-numbers language-css" data-language="css"><code class="language-css"><span class="token selector">//假设我给根元素的大小设置为14px
+html</span><span class="token punctuation">{</span>
+    font-size：14px
+<span class="token punctuation">}</span>
+<span class="token selector">//那么我底下的p标签如果想要也是14像素
+p</span><span class="token punctuation">{</span>
+    <span class="token property">font-size</span><span class="token punctuation">:</span>1rem
+<span class="token punctuation">}</span>
+//如此即可<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>rem 是相对于html节点的font-size来做计算的。所以在页面初始话的时候给根元素设置一个font-size，接下来的元素就根据rem来布局，这样就可以保证在页面大小变化时，布局可以自适应</p>
+<p>这是一个过渡方案，本质上，<strong>用户使用更大的屏幕，是想看到更多的内容，而不是更大的字</strong>。</p>
+<h5 id="2-vm，vh布局"><a href="#2-vm，vh布局" class="headerlink" title="2.vm，vh布局"></a>2.vm，vh布局</h5><p>vh、vw方案即将视觉视口宽度 window.innerWidth和视觉视口高度 window.innerHeight 等分为 100 份。</p>
+<p>转换px不免有误差，工程化的今天，webpack解析css 的时候用postcss-loader 有个postcss-px-to-viewport能自动实现px到vw的转化</p>
+<pre class="line-numbers language-js" data-language="js"><code class="language-js"><span class="token punctuation">{</span>
+    loader<span class="token operator">:</span> <span class="token string">'postcss-loader'</span><span class="token punctuation">,</span>
+    options<span class="token operator">:</span> <span class="token punctuation">{</span>
+    	<span class="token function-variable function">plugins</span><span class="token operator">:</span> <span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">=&gt;</span><span class="token punctuation">[</span>
+        	<span class="token function">require</span><span class="token punctuation">(</span><span class="token string">'autoprefixer'</span><span class="token punctuation">)</span><span class="token punctuation">(</span><span class="token punctuation">{</span>
+        		browsers<span class="token operator">:</span> <span class="token punctuation">[</span><span class="token string">'last 5 versions'</span><span class="token punctuation">]</span>
+        	<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+        	<span class="token function">require</span><span class="token punctuation">(</span><span class="token string">'postcss-px-to-viewport'</span><span class="token punctuation">)</span><span class="token punctuation">(</span><span class="token punctuation">{</span>
+        		viewportWidth<span class="token operator">:</span> <span class="token number">375</span><span class="token punctuation">,</span> <span class="token comment">//视口宽度（数字)</span>
+        		viewportHeight<span class="token operator">:</span> <span class="token number">1334</span><span class="token punctuation">,</span> <span class="token comment">//视口高度（数字）</span>
+        		unitPrecision<span class="token operator">:</span> <span class="token number">3</span><span class="token punctuation">,</span> <span class="token comment">//设置的保留小数位数（数字）</span>
+        		viewportUnit<span class="token operator">:</span> <span class="token string">'vw'</span><span class="token punctuation">,</span> <span class="token comment">//设置要转换的单位（字符串）</span>
+        		selectorBlackList<span class="token operator">:</span> <span class="token punctuation">[</span><span class="token string">'.ignore'</span><span class="token punctuation">,</span> <span class="token string">'.hairlines'</span><span class="token punctuation">]</span><span class="token punctuation">,</span> <span class="token comment">//不需要进行转换的类名（数组）</span>
+                minPixelValue<span class="token operator">:</span> <span class="token number">1</span><span class="token punctuation">,</span> <span class="token comment">//设置要替换的最小像素值（数字）</span>
+                mediaQuery<span class="token operator">:</span> <span class="token boolean">false</span> <span class="token comment">//允许在媒体查询中转换px（true/false）</span>
+        	<span class="token punctuation">}</span><span class="token punctuation">)</span>
+    	<span class="token punctuation">]</span>
+<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h5 id="3、px为主，vx和vxxx（vw-vh-vmax-vmin）为辅，搭配一些flex（推荐）"><a href="#3、px为主，vx和vxxx（vw-vh-vmax-vmin）为辅，搭配一些flex（推荐）" class="headerlink" title="3、px为主，vx和vxxx（vw/vh/vmax/vmin）为辅，搭配一些flex（推荐）"></a>3、px为主，vx和vxxx（vw/vh/vmax/vmin）为辅，搭配一些flex（推荐）</h5><p>推荐使用此种方案，是由于我们要去考虑用户的需求，<strong>用户之所以去买大屏手机，不是为了看到更大的字，而是为了看到更多的内容</strong>，这样直接使用px是最明智的方案</p>
+<h4 id="移动端适配流程"><a href="#移动端适配流程" class="headerlink" title="移动端适配流程"></a>移动端适配流程</h4><ol>
+<li><p>在head 设置width=device-width的viewport</p>
+</li>
+<li><p>在css中使用px</p>
+</li>
+<li><p>在适当的场景使用flex布局，或者配合vw进行自适应</p>
+</li>
+<li><p>在跨设备类型的时候（pc &lt;-&gt; 手机 &lt;-&gt; 平板）使用媒体查询</p>
+</li>
+<li><p>在跨设备类型如果交互差异太大的情况，考虑分开项目开发</p>
+</li>
+</ol>
+]]></content>
+      <categories>
+        <category>CSS</category>
+      </categories>
+      <tags>
+        <tag>移动端</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>同源策略与跨域</title>
     <url>/2021/03/30/tong-yuan-ce-lue-yu-kua-yu/</url>
     <content><![CDATA[<h2 id="跨源请求"><a href="#跨源请求" class="headerlink" title="跨源请求"></a>跨源请求</h2><p>使用fetch请求另一个网站时，请求可能会失败</p>
@@ -3352,8 +3454,28 @@ footer</span> <span class="token punctuation">{</span>
 </li>
 </ul>
 <ol start="11">
-<li><strong>异步axios结合中间件</strong>：</li>
+<li><strong>react有什么坑点？</strong></li>
 </ol>
+<ul>
+<li><p>JSX做表达式判断时候，需要强转为boolean类型</p>
+<pre class="line-numbers language-react" data-language="react"><code class="language-react">render() {
+  const b = 0;
+  return (
+    &lt;div&gt;
+      {b &amp;&amp; &lt;div&gt;test&lt;/div&gt;}
+    &lt;/div&gt;
+  );
+}<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>如果不使用 !!b 进行强转数据类型，会在页面里面输出 0。</p>
+</li>
+<li><p>遍历子节点的时候，不要用 index 作为组件的 key 进行传入</p>
+</li>
+<li><p>尽量不要在 componentWillReviceProps 里使用 setState，如果一定要使用，那么需要判断结束条件，不然会出现无限重渲染，导致页面崩溃。(实际不是componentWillReviceProps会无限重渲染，而是componentDidUpdate)</p>
+</li>
+<li><p>给组件添加ref时候，尽量不要使用匿名函数，因为当组件更新的时候，匿名函数会被当做新的prop处理，让ref属性接受到新函数的时候，react内部会先清空ref，也就是会以null为回调参数先执行一次ref这个props，然后在以该组件的实例执行一次ref，所以用匿名函数做ref的时候，有的时候去ref赋值后的属性会取到null。</p>
+</li>
+</ul>
 <h3 id="1-React"><a href="#1-React" class="headerlink" title="1.React"></a>1.React</h3><p><strong>有没有用过React Hooks？</strong></p>
 <ul>
 <li>常见的API有哪些？都有什么作用？</li>
@@ -5728,7 +5850,7 @@ Date: Sat, 08 Sep 2012 16:53:16 GMT<span aria-hidden="true" class="line-numbers-
 </li>
 </ol>
 <p>注意：不能获取set-cookie；header只加不减，不能移除；对于一些浏览器专门管理的header不能修改（Referer，Host）</p>
-<p>补充：Host，Origin，Referer</p>
+<p><strong>补充：Host，Origin，Referer</strong></p>
 <blockquote>
 <p>1.Host:请求将被发送的目的地，<strong>包括域名端口号</strong></p>
 <p>2.Referer：告诉服务器请求的原始资源URL，用于所有请求；<strong>协议+域名+查询参数（不包括锚点信息）</strong>；file协议下是不带referer的</p>
@@ -6277,6 +6399,170 @@ formData<span class="token punctuation">.</span><span class="token function">app
 <p>注意：图片Blob是如何添加的？</p>
 <pre class="line-numbers language-js" data-language="js"><code class="language-js"><span class="token comment">//像表单 &lt;input type="file" name="image"&gt; 一样</span>
 formData<span class="token punctuation">.</span><span class="token function">append</span><span class="token punctuation">(</span><span class="token string">"image"</span><span class="token punctuation">,</span> imageBlob<span class="token punctuation">,</span> <span class="token string">"image.png"</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+<h5 id="上传下载进度"><a href="#上传下载进度" class="headerlink" title="上传下载进度"></a>上传下载进度</h5><blockquote>
+<p>无法跟踪上传进度（请看XMLHttpRequest）</p>
+<p>下载进度：使用<code>response.body</code>属性,给与进度读取完全控制。</p>
+</blockquote>
+<pre class="line-numbers language-js" data-language="js"><code class="language-js"><span class="token comment">// Step 1：启动 fetch，并获得一个 reader</span>
+<span class="token keyword">let</span> response <span class="token operator">=</span> <span class="token keyword">await</span> <span class="token function">fetch</span><span class="token punctuation">(</span><span class="token string">'https://api.github.com/repos/javascript-tutorial/en.javascript.info/commits?per_page=100'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token keyword">const</span> reader <span class="token operator">=</span> response<span class="token punctuation">.</span>body<span class="token punctuation">.</span><span class="token function">getReader</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment">// Step 2：获得总长度（length）</span>
+<span class="token keyword">const</span> contentLength <span class="token operator">=</span> <span class="token operator">+</span>response<span class="token punctuation">.</span>headers<span class="token punctuation">.</span><span class="token function">get</span><span class="token punctuation">(</span><span class="token string">'Content-Length'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment">// Step 3：读取数据</span>
+<span class="token keyword">let</span> receivedLength <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span> <span class="token comment">// 当前接收到了这么多字节</span>
+<span class="token keyword">let</span> chunks <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">;</span> <span class="token comment">// 接收到的二进制块的数组（包括 body）</span>
+<span class="token keyword">while</span><span class="token punctuation">(</span><span class="token boolean">true</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token keyword">const</span> <span class="token punctuation">{</span>done<span class="token punctuation">,</span> value<span class="token punctuation">}</span> <span class="token operator">=</span> <span class="token keyword">await</span> reader<span class="token punctuation">.</span><span class="token function">read</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+  <span class="token keyword">if</span> <span class="token punctuation">(</span>done<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">break</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+
+  chunks<span class="token punctuation">.</span><span class="token function">push</span><span class="token punctuation">(</span>value<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  receivedLength <span class="token operator">+=</span> value<span class="token punctuation">.</span>length<span class="token punctuation">;</span>
+
+  console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token template-string"><span class="token template-punctuation string">`</span><span class="token string">Received </span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">${</span>receivedLength<span class="token interpolation-punctuation punctuation">}</span></span><span class="token string"> of </span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">${</span>contentLength<span class="token interpolation-punctuation punctuation">}</span></span><span class="token template-punctuation string">`</span></span><span class="token punctuation">)</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// Step 4：将块连接到单个 Uint8Array</span>
+<span class="token keyword">let</span> chunksAll <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">Uint8Array</span><span class="token punctuation">(</span>receivedLength<span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">// (4.1)</span>
+<span class="token keyword">let</span> position <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+<span class="token keyword">for</span><span class="token punctuation">(</span><span class="token keyword">let</span> chunk <span class="token keyword">of</span> chunks<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  chunksAll<span class="token punctuation">.</span><span class="token function">set</span><span class="token punctuation">(</span>chunk<span class="token punctuation">,</span> position<span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">// (4.2)</span>
+  position <span class="token operator">+=</span> chunk<span class="token punctuation">.</span>length<span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// Step 5：解码成字符串</span>
+<span class="token keyword">let</span> result <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">TextDecoder</span><span class="token punctuation">(</span><span class="token string">"utf-8"</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">decode</span><span class="token punctuation">(</span>chunksAll<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment">// 我们完成啦！</span>
+<span class="token keyword">let</span> commits <span class="token operator">=</span> <span class="token constant">JSON</span><span class="token punctuation">.</span><span class="token function">parse</span><span class="token punctuation">(</span>result<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token function">alert</span><span class="token punctuation">(</span>commits<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">.</span>author<span class="token punctuation">.</span>login<span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<blockquote>
+<ol>
+<li><p><code>response.body.getReader()</code>:获取一个流读取器</p>
+</li>
+<li><p> <code>Content-Length</code> :跨域请求可能不存在这个 header</p>
+</li>
+<li><p> <code>await reader.read()</code>：响应块放在chunks中</p>
+</li>
+<li><p>合并这些<code>Uint8Array</code> 字节块数组</p>
+</li>
+<li><p>解码为字符串</p>
+<p><code>result = new TextDecoder("utf-8").decode(chunksAll);</code></p>
+</li>
+<li><p>或者想要的到二进制数据，直接将chunks这个字节数组变为二进制</p>
+<p><code>blob = new Blob(chunks);</code></p>
+</li>
+</ol>
+</blockquote>
+<h5 id="中止（Abort）"><a href="#中止（Abort）" class="headerlink" title="中止（Abort）"></a>中止（Abort）</h5><blockquote>
+<p>js通常没有终止promise的概念，但提供了一个内建对象<code>AbortController</code>，不仅可以终止fetch，还可以终止其他异步任务</p>
+</blockquote>
+<p><strong>AbortController 对象</strong></p>
+<blockquote>
+<p>创建一个控制器<code>let controller = new AbortController();</code></p>
+<ul>
+<li>一个方法abort()</li>
+<li>一个属性signal，设置事件监听器</li>
+</ul>
+<p>当 <code>abort()</code> 被调用时：</p>
+<ul>
+<li><code>controller.signal</code> 就会触发 <code>abort</code> 事件。</li>
+<li><code>controller.signal.aborted</code> 属性变为 <code>true</code>。</li>
+</ul>
+</blockquote>
+<pre class="line-numbers language-js" data-language="js"><code class="language-js"><span class="token keyword">let</span> controller <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">AbortController</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token keyword">let</span> signal <span class="token operator">=</span> controller<span class="token punctuation">.</span>signal<span class="token punctuation">;</span>
+
+<span class="token comment">// 可取消的操作这一部分</span>
+<span class="token comment">// 获取 "signal" 对象，</span>
+<span class="token comment">// 并将监听器设置为在 controller.abort() 被调用时触发</span>
+signal<span class="token punctuation">.</span><span class="token function">addEventListener</span><span class="token punctuation">(</span><span class="token string">'abort'</span><span class="token punctuation">,</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token function">alert</span><span class="token punctuation">(</span><span class="token string">"abort!"</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment">// 另一部分，取消（在之后的任何时候）：</span>
+controller<span class="token punctuation">.</span><span class="token function">abort</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">// 中止！</span>
+
+<span class="token comment">// 事件触发，signal.aborted 变为 true</span>
+<span class="token function">alert</span><span class="token punctuation">(</span>signal<span class="token punctuation">.</span>aborted<span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">// true</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p><strong>结合Fetch</strong></p>
+<blockquote>
+<p>作为fetch的一个option进行传递</p>
+</blockquote>
+<pre class="line-numbers language-js" data-language="js"><code class="language-js"><span class="token keyword">let</span> controller <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">AbortController</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token function">fetch</span><span class="token punctuation">(</span>url<span class="token punctuation">,</span> <span class="token punctuation">{</span>
+  signal<span class="token operator">:</span> controller<span class="token punctuation">.</span>signal
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p><strong>实例：1s后终止fetch</strong></p>
+<blockquote>
+<p><code>fetch</code> 从 <code>signal</code> 获取了事件并中止了请求。当一个 fetch 被中止，它的 promise 就会以一个 error <code>AbortError</code> reject</p>
+</blockquote>
+<pre class="line-numbers language-js" data-language="js"><code class="language-js"><span class="token comment">// 1 秒后中止</span>
+<span class="token keyword">let</span> controller <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">AbortController</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token function">setTimeout</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> controller<span class="token punctuation">.</span><span class="token function">abort</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token number">1000</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token keyword">try</span> <span class="token punctuation">{</span>
+  <span class="token keyword">let</span> response <span class="token operator">=</span> <span class="token keyword">await</span> <span class="token function">fetch</span><span class="token punctuation">(</span><span class="token string">'/article/fetch-abort/demo/hang'</span><span class="token punctuation">,</span> <span class="token punctuation">{</span>
+    signal<span class="token operator">:</span> controller<span class="token punctuation">.</span>signal
+  <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span> <span class="token keyword">catch</span><span class="token punctuation">(</span>err<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token keyword">if</span> <span class="token punctuation">(</span>err<span class="token punctuation">.</span>name <span class="token operator">==</span> <span class="token string">'AbortError'</span><span class="token punctuation">)</span> <span class="token punctuation">{</span> <span class="token comment">// handle abort()</span>
+    <span class="token function">alert</span><span class="token punctuation">(</span><span class="token string">"Aborted!"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span>
+    <span class="token keyword">throw</span> err<span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p><strong>例子：终止其他异步promise</strong></p>
+<blockquote>
+<p>核心就是添加abort监听事件</p>
+</blockquote>
+<pre class="line-numbers language-js" data-language="js"><code class="language-js"><span class="token keyword">let</span> urls <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token operator">...</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+<span class="token keyword">let</span> controller <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">AbortController</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token keyword">let</span> ourJob <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">Promise</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token parameter">resolve<span class="token punctuation">,</span> reject</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span> <span class="token comment">// 我们的任务</span>
+  <span class="token operator">...</span>
+  controller<span class="token punctuation">.</span>signal<span class="token punctuation">.</span><span class="token function">addEventListener</span><span class="token punctuation">(</span><span class="token string">'abort'</span><span class="token punctuation">,</span> reject<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token keyword">let</span> fetchJobs <span class="token operator">=</span> urls<span class="token punctuation">.</span><span class="token function">map</span><span class="token punctuation">(</span><span class="token parameter">url</span> <span class="token operator">=&gt;</span> <span class="token function">fetch</span><span class="token punctuation">(</span>url<span class="token punctuation">,</span> <span class="token punctuation">{</span> <span class="token comment">// fetches</span>
+  signal<span class="token operator">:</span> controller<span class="token punctuation">.</span>signal
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment">// 等待完成我们的任务和所有 fetch</span>
+<span class="token keyword">let</span> results <span class="token operator">=</span> <span class="token keyword">await</span> Promise<span class="token punctuation">.</span><span class="token function">all</span><span class="token punctuation">(</span><span class="token punctuation">[</span><span class="token operator">...</span>fetchJobs<span class="token punctuation">,</span> ourJob<span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment">// 如果 controller.abort() 被从其他地方调用，</span>
+<span class="token comment">// 它将中止所有 fetch 和 ourJob</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ]]></content>
       <categories>
