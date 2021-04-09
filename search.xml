@@ -103,17 +103,6 @@ p</span><span class="token punctuation">{</span>
       </tags>
   </entry>
   <entry>
-    <title>同源策略与跨域</title>
-    <url>/2021/03/30/tong-yuan-ce-lue-yu-kua-yu/</url>
-    <content><![CDATA[<h2 id="跨源请求"><a href="#跨源请求" class="headerlink" title="跨源请求"></a>跨源请求</h2><p>使用fetch请求另一个网站时，请求可能会失败</p>
-<pre class="line-numbers language-js" data-language="js"><code class="language-js"><span class="token comment">//example</span>
-<span class="token keyword">try</span> <span class="token punctuation">{</span>
-  <span class="token keyword">await</span> <span class="token function">fetch</span><span class="token punctuation">(</span><span class="token string">'http://'</span><span class="token punctuation">)</span>
-<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
-
-]]></content>
-  </entry>
-  <entry>
     <title>计算机三级</title>
     <url>/2021/03/27/ji-suan-ji-san-ji/</url>
     <content><![CDATA[<h3 id="写在前面"><a href="#写在前面" class="headerlink" title="写在前面"></a>写在前面</h3><blockquote>
