@@ -1,0 +1,969 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"mimyue-hcm.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="同源策略使用fetch请求另一个网站时，请求可能会失败 &#x2F;&#x2F;example try {   await fetch(&#39;http:&#x2F;&#x2F;example.com&#39;); } catch(err) {   alert(err); &#x2F;&#x2F; fetch 失败 }   核心概念  源：协议&#x2F;域&#x2F;端口 同源策略：  限制Cookie，loaclStorage，indexedDB读取 DOM无法获取 AJAX请求无效（">
+<meta property="og:type" content="article">
+<meta property="og:title" content="同源策略与跨域">
+<meta property="og:url" content="http://mimyue-hcm.github.io/2021/03/30/tong-yuan-ce-lue-yu-kua-yu/index.html">
+<meta property="og:site_name" content="忞月の博客">
+<meta property="og:description" content="同源策略使用fetch请求另一个网站时，请求可能会失败 &#x2F;&#x2F;example try {   await fetch(&#39;http:&#x2F;&#x2F;example.com&#39;); } catch(err) {   alert(err); &#x2F;&#x2F; fetch 失败 }   核心概念  源：协议&#x2F;域&#x2F;端口 同源策略：  限制Cookie，loaclStorage，indexedDB读取 DOM无法获取 AJAX请求无效（">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://mimyue-hcm.github.io/2021/03/30/tong-yuan-ce-lue-yu-kua-yu/image-20210404150641516.png">
+<meta property="og:image" content="http://mimyue-hcm.github.io/2021/03/30/tong-yuan-ce-lue-yu-kua-yu/image-20210404151218169.png">
+<meta property="article:published_time" content="2021-03-30T01:36:30.000Z">
+<meta property="article:modified_time" content="2021-05-02T02:47:31.963Z">
+<meta property="article:author" content="忞月">
+<meta property="article:tag" content="网络">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://mimyue-hcm.github.io/2021/03/30/tong-yuan-ce-lue-yu-kua-yu/image-20210404150641516.png">
+
+<link rel="canonical" href="http://mimyue-hcm.github.io/2021/03/30/tong-yuan-ce-lue-yu-kua-yu/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>同源策略与跨域 | 忞月の博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+  <script src="https://cdn.jsdelivr.net/gh/minyue-hcm/live2d-widget@1.0.3/autoload.js"></script>
+<style type="text/css" lang="css">
+    #loading-container{
+        position: fixed;
+        top: 0;
+        left: 0;
+        min-height: 100vh;
+        width: 100vw;
+        z-index: 9999;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background: #FFF;
+        text-align: center;
+        /* loader页面消失采用渐隐的方式*/
+        -webkit-transition: opacity 1s ease;
+        -moz-transition: opacity 1s ease;
+        -o-transition: opacity 1s ease;
+        transition: opacity 1s ease;
+    }
+    .loading-image{
+        width: 120px;
+        height: 50px;
+        transform: translate(-50%);
+    }
+    
+    .loading-image div:nth-child(2) {
+        -webkit-animation: pacman-balls 1s linear 0s infinite;
+        animation: pacman-balls 1s linear 0s infinite
+    }
+
+    .loading-image div:nth-child(3) {
+        -webkit-animation: pacman-balls 1s linear .33s infinite;
+        animation: pacman-balls 1s linear .33s infinite
+    }
+
+    .loading-image div:nth-child(4) {
+        -webkit-animation: pacman-balls 1s linear .66s infinite;
+        animation: pacman-balls 1s linear .66s infinite
+    }
+
+    .loading-image div:nth-child(5) {
+        -webkit-animation: pacman-balls 1s linear .99s infinite;
+        animation: pacman-balls 1s linear .99s infinite
+    }
+    
+   .loading-image div:first-of-type {
+        width: 0;
+        height: 0;
+        border: 25px solid #49b1f5;
+        border-right-color: transparent;
+        border-radius: 25px;
+        -webkit-animation: rotate_pacman_half_up .5s 0s infinite;
+        animation: rotate_pacman_half_up .5s 0s infinite;
+    }
+    .loading-image div:nth-child(2) {
+        width: 0;
+        height: 0;
+        border: 25px solid #49b1f5;
+        border-right-color: transparent;
+        border-radius: 25px;
+        -webkit-animation: rotate_pacman_half_down .5s 0s infinite;
+        animation: rotate_pacman_half_down .5s 0s infinite;
+        margin-top: -50px;
+    }
+    @-webkit-keyframes rotate_pacman_half_up {0% {transform: rotate(270deg)}50% {transform: rotate(1turn)}to {transform: rotate(270deg)}}
+
+    @keyframes rotate_pacman_half_up {0% {transform: rotate(270deg)}50% {transform: rotate(1turn)}to {transform: rotate(270deg)}}
+
+    @-webkit-keyframes rotate_pacman_half_down {0% {transform: rotate(90deg)}50% {transform: rotate(0deg)}to {transform: rotate(90deg)}}
+
+    @keyframes rotate_pacman_half_down {0% {transform: rotate(90deg)}50% {transform: rotate(0deg)}to {transform: rotate(90deg)}}
+    
+    @-webkit-keyframes pacman-balls {75% {opacity: .7}to {transform: translate(-100px, -6.25px)}}
+
+    @keyframes pacman-balls {75% {opacity: .7}to {transform: translate(-100px, -6.25px)}}
+    
+   
+    .loading-image div:nth-child(3),
+    .loading-image div:nth-child(4),
+    .loading-image div:nth-child(5),
+    .loading-image div:nth-child(6){
+        background-color: #49b1f5;
+        width: 15px;
+        height: 15px;
+        border-radius: 100%;
+        margin: 2px;
+        width: 10px;
+        height: 10px;
+        position: absolute;
+        transform: translateY(-6.25px);
+        top: 25px;
+        left: 100px;
+    }
+    .loading-text{
+        margin-bottom: 20vh;
+        text-align: center;
+        color: #2c3e50;
+        font-size: 2rem;
+        box-sizing: border-box;
+        padding: 0 10px;
+        text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    }
+    @media only screen and (max-width: 500px) {
+         .loading-text{
+            font-size: 1.5rem;
+         }
+    }
+    .fadeout {
+        opacity: 0;
+        filter: alpha(opacity=0);
+    }
+    /* logo出现动画 */
+    @-webkit-keyframes fadeInDown{0%{opacity:0;-webkit-transform:translate3d(0,-100%,0);transform:translate3d(0,-100%,0)}100%{opacity:1;-webkit-transform:none;transform:none}}
+    @keyframes fadeInDown{0%{opacity:0;-webkit-transform:translate3d(0,-100%,0);}}
+ </style>
+ <script>
+(function () {
+    const loaded = function(){
+       setTimeout(function(){
+            const loader = document.getElementById("loading-container");
+            loader.className="fadeout" ;//使用渐隐的方法淡出loading page
+            // document.getElementById("body-wrap").style.display="flex";
+            setTimeout(function(){
+                loader.style.display="none";
+            },1000); 
+        },1000);//强制显示loading page 1s  
+    };
+    loaded();
+})()
+ </script>
+<style>.github-emoji { position: relative; display: inline-block; width: 1.2em; min-height: 1.2em; overflow: hidden; vertical-align: top; color: transparent; }  .github-emoji > span { position: relative; z-index: 10; }  .github-emoji img, .github-emoji .fancybox { margin: 0 !important; padding: 0 !important; border: none !important; outline: none !important; text-decoration: none !important; user-select: none !important; cursor: auto !important; }  .github-emoji img { height: 1.2em !important; width: 1.2em !important; position: absolute !important; left: 50% !important; top: 50% !important; transform: translate(-50%, -50%) !important; user-select: none !important; cursor: auto !important; } .github-emoji-fallback { color: inherit; } .github-emoji-fallback img { opacity: 0 !important; }</style>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">忞月の博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">要快乐哦！</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://mimyue-hcm.github.io/2021/03/30/tong-yuan-ce-lue-yu-kua-yu/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/./images/avatar.jpg">
+      <meta itemprop="name" content="忞月">
+      <meta itemprop="description" content="今天你做了什么？">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="忞月の博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          同源策略与跨域
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-03-30 09:36:30" itemprop="dateCreated datePublished" datetime="2021-03-30T09:36:30+08:00">2021-03-30</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-02 10:47:31" itemprop="dateModified" datetime="2021-05-02T10:47:31+08:00">2021-05-02</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E9%9D%A2%E8%AF%95/" itemprop="url" rel="index"><span itemprop="name">面试</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="同源策略"><a href="#同源策略" class="headerlink" title="同源策略"></a>同源策略</h2><p>使用fetch请求另一个网站时，请求可能会失败</p>
+<pre class="line-numbers language-js" data-language="js"><code class="language-js"><span class="token comment">//example</span>
+<span class="token keyword">try</span> <span class="token punctuation">{</span>
+  <span class="token keyword">await</span> <span class="token function">fetch</span><span class="token punctuation">(</span><span class="token string">'http://example.com'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span> <span class="token keyword">catch</span><span class="token punctuation">(</span>err<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token function">alert</span><span class="token punctuation">(</span>err<span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">// fetch 失败</span>
+<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<blockquote>
+<p>核心概念  源：协议/域/端口</p>
+<p>同源策略：</p>
+<ul>
+<li>限制Cookie，loaclStorage，indexedDB读取</li>
+<li>DOM无法获取</li>
+<li>AJAX请求无效（可以发送，但浏览器会拒绝接受响应）</li>
+</ul>
+</blockquote>
+<p>那么怎么才能绕开同源协议呢？</p>
+<a id="more"></a>
+
+<h2 id="CSRF攻击"><a href="#CSRF攻击" class="headerlink" title="CSRF攻击"></a>CSRF攻击</h2><p>(Cross-site request forgery), 即跨站请求伪造；黑客诱导用户点击链接，打开黑客的网站，然后黑客利用用户<strong>目前的登录状态</strong>发起跨站请求。</p>
+<ul>
+<li>受害者登录a.com，并保留了登录凭证（Cookie）。</li>
+<li>攻击者引诱受害者访问了b.com。</li>
+<li>b.com 向 a.com 发送了一个请求：a.com/act=xx。浏览器会默认携带a.com的Cookie。</li>
+<li>a.com接收到请求后，对请求进行验证，并确认是受害者的凭证，误以为是受害者自己发送的请求。</li>
+<li>a.com以受害者的名义执行了act=xx。</li>
+<li>攻击完成，攻击者在受害者不知情的情况下，冒充受害者，让a.com执行了自己定义的操作。</li>
+</ul>
+<blockquote>
+<p>b.com怎么发送跨域请求呢？</p>
+<ul>
+<li>script/iframe/img等标签却是支持跨域的</li>
+</ul>
+<pre class="line-numbers language-html" data-language="html"><code class="language-html">//实例1：银行转账
+&lt;iframe src="http://a.com/app/transferFunds?amount=1500&amp;destinationAccount=... &gt;
+//实例2：路由器
+&lt;img src=”http://192.168.1.1/admin/config/outsideInterface?nexthop=123.45.67.89” alt=”pwned” height=”1” width=”1”/&gt; <span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+</blockquote>
+<h4 id="防护策略"><a href="#防护策略" class="headerlink" title="防护策略"></a><strong>防护策略</strong></h4><ul>
+<li>针对不明外域的访问<ul>
+<li>同源检测</li>
+<li>Samesite Cookie</li>
+</ul>
+</li>
+<li>提交时要求附有本域才能获得的信息<ul>
+<li>CSRF Token</li>
+<li>双重Cookie验证</li>
+</ul>
+</li>
+</ul>
+<h4 id="同源检测"><a href="#同源检测" class="headerlink" title="同源检测"></a>同源检测</h4><p>如何判断请求是来自外域呢？</p>
+<p>HTTP协议中，每一个异步请求都会携带两个Header，用来标记来源域名</p>
+<ul>
+<li>Origin Header</li>
+<li>Referer Header</li>
+</ul>
+<p>这两个header在浏览器发起请求时，多时情况自动带上，并且前端不能自定义内容，服务器可以解析这两个Header中的域名，确定来源域。</p>
+<h5 id="使用Origin-Header确定来源域名"><a href="#使用Origin-Header确定来源域名" class="headerlink" title="使用Origin Header确定来源域名"></a>使用Origin Header确定来源域名</h5><p>在部分与CSRF有关的请求中，请求的Header中会携带Origin字段。字段内包含请求的协议+域名（不包含path及query）</p>
+<p>如果Origin存在就使用Origin中的字段确认来源域名</p>
+<p>Origin不存在的特殊情况</p>
+<ul>
+<li>IE11同源策略：不会在跨站CORS请求上添加Origin标头，Referer头将仍然是唯一的标识。（<strong>Trust Zones</strong>，<strong>Port</strong>）</li>
+<li>302重定向：浏览器肯定不希望将Origin泄露到新的服务器上。</li>
+</ul>
+<h5 id="使用Referer-Header确定来源域名"><a href="#使用Referer-Header确定来源域名" class="headerlink" title="使用Referer Header确定来源域名"></a>使用Referer Header确定来源域名</h5><p>在HTTP头中有一个字段叫Referer，记录了该HTTP请求的来源页面地址。</p>
+<p>当然Referer值由浏览器提供，不同浏览器标准不一，安全性依赖于第三方（浏览器），理论上是不安全的，部分情况攻击者还可以隐藏，甚至修改自己的请求的referer。</p>
+<p>新版Referer Policy规定五种Referer策略（no-Referrer，no-Referrer-when-downgrade，**(same or strict) origin**，(strict) origin-when-crossorigin，unsafe-url）</p>
+<p>需要把策略设置为same-origin：对于同源的会发送Referer，值为Host不带path；跨域的不携带。</p>
+<p>设置Referer策略有三种方法</p>
+<ol>
+<li>在CSP中设定</li>
+<li>页面头部增加meta标签</li>
+<li>a标签增加refererpolicy属性</li>
+</ol>
+<p>另外有些情况referer不可信：</p>
+<ol>
+<li>IE6,7使用IE6、7下使用window.location.href=url进行界面的跳转，会丢失Referer。</li>
+<li>IE6、7下使用window.open，也会缺失Referer。</li>
+<li>HTTPS页面跳转到HTTP页面，所有浏览器Referer都丢失</li>
+</ol>
+<h5 id="无法确认来源域名"><a href="#无法确认来源域名" class="headerlink" title="无法确认来源域名"></a><strong>无法确认来源域名</strong></h5><ol>
+<li>两者都不存在，建议直接阻止</li>
+<li>CSRF Token二次检查</li>
+</ol>
+<h5 id="如何阻止外域请求"><a href="#如何阻止外域请求" class="headerlink" title="如何阻止外域请求"></a>如何阻止外域请求</h5><p>通过Header的验证，我们可以知道发起请求的来源域名，这些来源域名可能是网站本域，或者子域名，或者有授权的第三方域名，又或者来自不可信的未知域名。</p>
+<p>凭借域名可信度就可以完全判断嘛？</p>
+<p>当然不可以，对于搜索引擎搜索出来的第三方页面请求。就可能被当做CSRF攻击，所以需要过滤掉页面请求，但这也成为了攻击者的空子。</p>
+<pre class="line-numbers language-none"><code class="language-none">GET https://example.com/addComment?comment=XXX&amp;dest=orderId<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>很多网站经常把主文档GET请求挂上参数来实现产品功能，但是这样做对于自身来说是存在安全风险的</p>
+<p>当然大多数CSRF攻击都是来自第三方域名，但不排除本域，攻击者有权限在本域发出评论（链接，图片统称UGC）同源策略无法防护。</p>
+<p>综上所述：同源验证是一个相对简单的防范方法，能够防范绝大多数的CSRF攻击。但这并不是万无一失的，对于安全性要求较高，或者有较多用户输入内容的网站，我们就要对关键的接口做额外的防护措施。</p>
+<h4 id="CSRF-Token"><a href="#CSRF-Token" class="headerlink" title="CSRF Token"></a>CSRF Token</h4><p>针对攻击者无法获取Cookie中的信息，只是利用而已，想到我们可以要求所有用户请求都携带一个CSRF攻击者无法获取到的Token。服务器校验Token就可以实现防护。</p>
+<h5 id="三个步骤"><a href="#三个步骤" class="headerlink" title="三个步骤"></a>三个步骤</h5><ol>
+<li><p>将CSRF Token输出到页面中</p>
+<p>首先，用户打开页面的时候，<strong>服务器</strong>需要给这个用户生成一个Token，该Token通过加密算法对数据进行加密，一般Token都包括随机字符串和时间戳的组合；安全起见Token肯定不能存放在Cookie中，而应该存在服务器<strong>Session中</strong>。之后在每次页面加载时，使用JS遍历整个DOM树，对于DOM中所有的a和form标签后加入Token；对于动态生成的HTML代码需要程序员手动添加Token。</p>
+</li>
+<li><p>页面提交的请求携带这个Token</p>
+<p>对于GET请求，Token将附在请求地址之后，这样URL 就变成 <a target="_blank" rel="noopener" href="http://url/?csrftoken=tokenvalue%E8%80%8C%E5%AF%B9%E4%BA%8E">http://url?csrftoken=tokenvalue而对于</a> POST 请求来说，要在 form 的最后加上：</p>
+<pre class="line-numbers language-html" data-language="html"><code class="language-html"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>input</span> <span class="token attr-name">type</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span>”hidden”</span> <span class="token attr-name">name</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span>”csrftoken”</span> <span class="token attr-name">value</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span>”tokenvalue”/</span><span class="token punctuation">&gt;</span></span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>这样，就把Token以参数的形式加入请求了</p>
+</li>
+<li><p>服务器验证Token是否正确</p>
+<p>当用户从客户端得到了Token，再次提交给服务器的时候，服务器需要判断Token的有效性，验证过程是先解密Token，对比加密字符串以及时间戳，如果加密<strong>字符串一致且时间未过期</strong>，那么这个Token就是有效的。</p>
+</li>
+</ol>
+<p>安全性有加强，但这种方法比较麻烦就是将Token以参数形式加入请求。</p>
+<h5 id="分布式校验"><a href="#分布式校验" class="headerlink" title="分布式校验"></a>分布式校验</h5><p>在大型网站中，使用Session存储CSRF Token会带来很大的压力。</p>
+<p>用户发起的HTTP请求通常要经过像Ngnix之类的负载均衡器之后，再路由到具体的服务器上，由于Session默认存储在单机服务器内存中，因此在分布式环境下同一个用户发送的多次HTTP请求可能会先后落到不同的服务器上，导致后面发起的HTTP请求无法拿到之前的HTTP请求存储在服务器中的Session数据，从而使得Session机制在分布式环境下失效，因此在分布式集群中CSRF Token需要存储在<strong>Redis之类的公共存储空间</strong>。</p>
+<p>由于使用Session存储，读取和验证CSRF Token会引起比较大的复杂度和性能问题，目前很多网站采用Encrypted Token Pattern方式；计算出来，而不是读取存储。通常是使用UserID、时间戳和随机数，通过加密的方法生成</p>
+<blockquote>
+<p>验证码和密码其实也可以起到CSRF Token的作用哦，而且更安全。</p>
+<p>这就是为什么很多银行等网站会要求已经登录的用户在转账时再次输入密码</p>
+</blockquote>
+<h4 id="双重Cookie验证"><a href="#双重Cookie验证" class="headerlink" title="双重Cookie验证"></a>双重Cookie验证</h4><p>会话中存储CSRF Token比较繁琐，而且不能在通用的拦截上统一处理所有的接口</p>
+<p>另一种防御措施是使用双重提交Cookie。利用CSRF攻击不能获取到用户Cookie的特点，我们可以<strong>要求Ajax和表单请求携带一个Cookie中的值</strong></p>
+<p>流程：</p>
+<ul>
+<li>在用户访问网站页面时，向请求域名注入一个Cookie，内容为随机字符串（例如<code>csrfcookie=v8g9e4ksfhw</code>）。</li>
+<li>在前端向后端发起请求时，取出Cookie，并添加到URL的参数中（接上例<code>POST https://www.a.com/comment?csrfcookie=v8g9e4ksfhw</code>）。</li>
+<li>后端接口验证Cookie中的字段与URL参数中的字段是否一致，不一致则拒绝。</li>
+</ul>
+<p><strong>用双重Cookie防御CSRF的优点：</strong></p>
+<ul>
+<li>无需使用Session，适用面更广，易于实施。</li>
+<li>Token储存于客户端中，不会给服务器带来压力。</li>
+<li>相对于Token，实施成本更低，可以在前后端统一拦截校验，而不需要一个个接口和页面添加。</li>
+</ul>
+<p><strong>缺点：</strong></p>
+<ul>
+<li>Cookie中增加了额外的字段。</li>
+<li>如果有其他漏洞（例如XSS），攻击者可以注入Cookie，那么该防御方式失效。</li>
+<li>难以做到子域名的隔离。</li>
+<li>为了确保Cookie传输安全，采用这种防御方式的最好确保用整站HTTPS的方式，如果还没切HTTPS的使用这种方式也会有风险。</li>
+</ul>
+<h4 id="Samesite-Cookie属性"><a href="#Samesite-Cookie属性" class="headerlink" title="Samesite Cookie属性"></a>Samesite Cookie属性</h4><p>为了从源头上解决这个问题，Google起草了一份草案来改进HTTP协议，那就是为<strong>Set-Cookie响应头新增Samesite属性</strong>，它用来标明这个 Cookie是个“同站 Cookie”，同站Cookie只能作为第一方Cookie，不能作为第三方Cookie，</p>
+<p><code>SameSite</code>可以设置为三个值，<code>Strict</code>、<code>Lax</code>和<code>None</code>。</p>
+<p><strong>a.</strong> 在<code>Strict</code>模式下，浏览器完全禁止第三方请求携带Cookie。比如请求<code>sanyuan.com</code>网站只能在<code>sanyuan.com</code>域名当中请求才能携带 Cookie，在其他网站请求都不能。</p>
+<p><strong>b.</strong> 在<code>Lax</code>模式，就宽松一点了，但是只能在 <code>get 方法提交表单</code>况或者<code>a 标签发送 get 请求</code>的情况下可以携带 Cookie，其他情况均不能。</p>
+<p><strong>c.</strong> 在<code>None</code>模式下，也就是默认模式，请求会自动携带上 Cookie</p>
+<h2 id="跨域请求"><a href="#跨域请求" class="headerlink" title="跨域请求"></a>跨域请求</h2><h4 id="1-JSONP"><a href="#1-JSONP" class="headerlink" title="1. JSONP"></a>1. JSONP</h4><p>script<code>可以具有任何域的</code>src<code>例如 &lt;script src="http://another.com/…"&gt;</code></p>
+<p><strong>实例：动态获取天气数据</strong></p>
+<p>假设在我们的网站，需要以这种方式从 <code>http://another.com</code> 网站获取数据，例如天气：</p>
+<ol>
+<li><p>首先，我们先声明一个全局函数来接收数据，例如 <code>gotWeather</code>。</p>
+<pre class="line-numbers language-js" data-language="js"><code class="language-js"><span class="token comment">// 1. 声明处理天气数据的函数</span>
+<span class="token keyword">function</span> <span class="token function">gotWeather</span><span class="token punctuation">(</span><span class="token parameter"><span class="token punctuation">{</span> temperature<span class="token punctuation">,</span> humidity <span class="token punctuation">}</span></span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token function">alert</span><span class="token punctuation">(</span><span class="token template-string"><span class="token template-punctuation string">`</span><span class="token string">temperature: </span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">${</span>temperature<span class="token interpolation-punctuation punctuation">}</span></span><span class="token string">, humidity: </span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">${</span>humidity<span class="token interpolation-punctuation punctuation">}</span></span><span class="token template-punctuation string">`</span></span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+</li>
+<li><p>然后我们创建一个特性（attribute）为 <code>src="http://another.com/weather.json?callback=gotWeather"</code> 的 <code>&lt;script&gt;</code> 标签，使用我们的函数名作为它的 <code>callback</code> URL-参数。</p>
+<pre class="line-numbers language-js" data-language="js"><code class="language-js"><span class="token keyword">let</span> script <span class="token operator">=</span> document<span class="token punctuation">.</span><span class="token function">createElement</span><span class="token punctuation">(</span><span class="token string">'script'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+script<span class="token punctuation">.</span>src <span class="token operator">=</span> <span class="token template-string"><span class="token template-punctuation string">`</span><span class="token string">http://another.com/weather.json?callback=gotWeather</span><span class="token template-punctuation string">`</span></span><span class="token punctuation">;</span>
+document<span class="token punctuation">.</span>body<span class="token punctuation">.</span><span class="token function">append</span><span class="token punctuation">(</span>script<span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+</li>
+<li><p>远程服务器 <code>another.com</code> 动态生成一个脚本，该脚本调用 <code>gotWeather(...)</code>，发送它想让我们接收的数据。</p>
+<pre class="line-numbers language-js" data-language="js"><code class="language-js"><span class="token comment">// 我们期望来自服务器的回答看起来像这样：</span>
+<span class="token function">gotWeather</span><span class="token punctuation">(</span><span class="token punctuation">{</span>
+  temperature<span class="token operator">:</span> <span class="token number">25</span><span class="token punctuation">,</span>
+  humidity<span class="token operator">:</span> <span class="token number">78</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+</li>
+<li><p>当远程脚本加载并执行时，<code>gotWeather</code> 函数将运行，并且因为它是我们的函数，我们就有了需要的数据。</p>
+</li>
+</ol>
+<h4 id="2-跨域资源共享（CORS）"><a href="#2-跨域资源共享（CORS）" class="headerlink" title="2. 跨域资源共享（CORS）"></a>2. 跨域资源共享（CORS）</h4><p>有两种类型的跨源请求：</p>
+<ol>
+<li>简单的请求</li>
+<li>所有其他请求</li>
+</ol>
+<h5 id="简单请求"><a href="#简单请求" class="headerlink" title="简单请求"></a>简单请求</h5><p>一个 简单的请求是指满足以下两个条件的请求：</p>
+<ol>
+<li><p>简单的方法：GET，POST 或 HEAD</p>
+</li>
+<li><p>简单的 header</p>
+<p>—— 仅允许自定义下列 header：</p>
+<ul>
+<li><code>Accept</code>，</li>
+<li><code>Accept-Language</code>，</li>
+<li><code>Content-Language</code>，</li>
+<li><code>Content-Type</code> 的值为 <code>application/x-www-form-urlencoded</code>，<code>multipart/form-data</code> 或 <code>text/plain</code>。</li>
+</ul>
+</li>
+</ol>
+<h5 id="用于简单请求的CORS"><a href="#用于简单请求的CORS" class="headerlink" title="用于简单请求的CORS"></a>用于简单请求的CORS</h5><p>如果一个请求是跨源的，浏览器始终会向其添加 <code>Origin</code> header</p>
+<p>例如，如果我们从 <code>https://javascript.info/page</code> 请求 <code>https://anywhere.com/request</code>，请求的 header 将会如下：</p>
+<pre class="line-numbers language-http" data-language="http"><code class="language-http">GET /request
+<span class="token header-name keyword">Host:</span> anywhere.com
+<span class="token header-name keyword">Origin:</span> https://javascript.info
+...<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>正如你所见，<code>Origin</code> 包含了确切的源（domain/protocol/port），没有路径。</p>
+<p>服务器可以检查 <code>Origin</code>，如果同意接受这样的请求，就会在响应中添加一个特殊的 header <code>Access-Control-Allow-Origin</code>。该 header 包含了允许的源（在我们的示例中是 <code>https://javascript.info</code>），或者一个星号 <code>*</code>。然后响应成功，否则报错。</p>
+<img data-src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAAEsCAMAAABOo35HAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAAC9UExURVlZWdPT07KysmRkZIWFhfT09JmZmWZmZm9vb39/fxkZGUxMTDMzM3p6epCQkKamppubm729venp6cjIyN7e3tbW1s/Pz8LCwnx8fLS0tFZWVoiIiI+Pj6GhoeTk5Glpabu7u93d3evr66CgoJSUlKqqqsnJyeDg4Hd3d8PDw+Xl5bi4uNHR0dvb26Ojo6urq+fn51hYWDg4OCgoKHBwcK2traenp0FBQe7u7vHx8U5OTre3t8zMzHV1df///7GrnpQAAAA/dFJOU///////////////////////////////////////////////////////////////////////////////////AI4mfBcAAAUGSURBVHja7NoJb6M4GMZxY0NCD64kve/pMZ2d3Z297+X7f6zFNmBAMUXa6URl/q9UJSWPUPzrizFWRUlNLgEBWGCBBRZYYEEAFlhggQUWWBCABRZYYIEFFgRggQUWWGCBBQFYYIEFFlhgQQAWWGCBBRZYEIAFFlhggQUWBGCBBRZYYIEFAVhggQUWWGBBABZYYIEFFlgQgAUWWGCBBRYEYIEFFlhggQUBWGCBBRZYYEEAFlhggQUWWBCABRZYYIEFFgRggQUWWGCBBQFYYIEFFlhgQQAWWGCBBRZYEIAFFlhggQUWBGCBBRZYn6cCIcRXgvX/h9qcIVBqDdbEM8RCxGCB9QqXYRwHYDHBgwXWl8eKZKiESHI3Ba1kWs3fKixcaJUl1YyeBm7Ocq+yLItUiVBGnXxenSHJolIKEcwHq6ikbOX1YGVzQCTN8LPmSLreghUl9sN4Uw7yajMrLC0TZ1ImzqY6FEop0+pIaEN5HaoOxVuwEqFyc4I46uSlzOLqgxlh6UaR9l3VYWl9Fdoxb1Q90KJtu41pwwFW/WHhTtW8i7TafLCqRsk6bsGw63L9qurXRmuIlbT9lDQnlXU+nBFW1Q2qnZbDprWa2tjR90LZFqx1/+Td/HpGWLlrLDvIwTcx6dQ1Vrntbig68cDms3JwbA5Y1azs1ger6sNV/bbIw1jU81MvNAGrl58RVn8ozW+btF08iGFoAlYvP3csfVur1gJBEIA1uBmue5dhZDOyO2epbmgCVi8/I6x0MMHH9pjsTfBhNzQBq5uPZoQlB0uH3DZG4EZqQ26fL3sZq5uf09Ih6qw3i/pm6BZO0qZX7rrUS68Xsbr5ZE4rePMk08pk9aUZugfqppvs6AM1Acvlo/StP+6EbW06z8hJqxbYp2BZPQUnFsLsKuhQdaHqn5ewbF7KXIn0jWO5MqOQ7RaNLPtbNMmmhimj0GUmYLl8Gs0Lq4wyPbTu1l2QKqHSouzs3OlDIslW5SQsnY/NXmFplyNvEuuLV/Tau9BzwiraDUSwXmysztYWWNtL1psXeumgIrDGaqXvBfUuvtqUYI3V2t1wk1e2msFluJJm6zDJXv/fIfjPP7DAAgsssCiwwAILLLDAosACCyywwAKLAgsssMACC6zt9fDz/v75tyOB+98PD2+ORgKffjw4OP1uJPDxl+Xy8v1I4MPF3t7VNyOB4/vF4uzdzrG+39f1kz/w66Guv/yBvw90KX/gZKkr8Qf+2dOV+gNHC12/7RxrabD2/a31bLAO/a11YbAO/K21MFhLf2s9Gqw9f2vdGqzFu11jnVusE2/gxmI9eQOnFuvYG7i0WH7uK4t15w2cWazrXWP9a7H8f/bQYvm/6IPF+sF/pVssf19Ii/WH/0K2WH/uGuvEWC39gSdj9Twy+Rqri5EZx1gt/IE7Y/XoD1wbq9vd3w1PlufnD2OBp+ebm/uxwPHF6emnscDR4vLy41jg7vHq6sNY4Pr27OyYdRaLUrDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssL6u+k+AAQCR9eHtLKvLfwAAAABJRU5ErkJggg==" data-original="/2021/03/30/tong-yuan-ce-lue-yu-kua-yu/image-20210404150641516.png" class="" title="简单请求">
+
+<p>响应示例</p>
+<pre class="line-numbers language-http" data-language="http"><code class="language-http">200 OK
+<span class="token header-name keyword">Content-Type:</span>text/html; charset=UTF-8
+<span class="token header-name keyword">Access-Control-Allow-Origin:</span> https://javascript.info<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
+<p>对于跨源请求，默认情况下，JavaScript 只能访问“简单” response header：</p>
+<ul>
+<li><code>Cache-Control</code></li>
+<li><code>Content-Language</code></li>
+<li><code>Content-Type</code></li>
+<li><code>Expires</code></li>
+<li><code>Last-Modified</code></li>
+<li><code>Pragma</code></li>
+</ul>
+<p>访问任何其他 response header 都将导致 error。</p>
+<p>要授予 JavaScript 对任何其他 response header 的访问权限，服务器必须发送 <code>Access-Control-Expose-Headers</code> header。它包含一个以逗号分隔的应该被设置为可访问的非简单 header 名称列表。</p>
+<p>例如：</p>
+<pre class="line-numbers language-http" data-language="http"><code class="language-http">200 OK
+<span class="token header-name keyword">Content-Type:</span>text/html; charset=UTF-8
+<span class="token header-name keyword">Content-Length:</span> 12345
+<span class="token header-name keyword">API-Key:</span> 2c9de507f2c54aa1
+<span class="token header-name keyword">Access-Control-Allow-Origin:</span> https://javascript.info
+<span class="token header-name keyword">Access-Control-Expose-Headers:</span> Content-Length,API-Key<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>有了这种 <code>Access-Control-Expose-Headers</code> header，此脚本就被允许读取响应的 <code>Content-Length</code> 和 <code>API-Key</code> header。</p>
+<h5 id="非简单请求"><a href="#非简单请求" class="headerlink" title="非简单请求"></a>非简单请求</h5><p>我们可以使用任何 HTTP 方法：不仅仅是 <code>GET/POST</code>，也可以是 <code>PATCH</code>，<code>DELETE</code> 及其他。</p>
+<p>它发送这类请求前，会先发送“预检（preflight）”请求来请求许可。</p>
+<img data-src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAAEsCAMAAABOo35HAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAAC9UExURVlZWdPT07KysmRkZIWFhfT09JmZmWZmZm9vb39/fxkZGUxMTDMzM3p6epCQkKamppubm729venp6cjIyN7e3tbW1s/Pz8LCwnx8fLS0tFZWVoiIiI+Pj6GhoeTk5Glpabu7u93d3evr66CgoJSUlKqqqsnJyeDg4Hd3d8PDw+Xl5bi4uNHR0dvb26Ojo6urq+fn51hYWDg4OCgoKHBwcK2traenp0FBQe7u7vHx8U5OTre3t8zMzHV1df///7GrnpQAAAA/dFJOU///////////////////////////////////////////////////////////////////////////////////AI4mfBcAAAUGSURBVHja7NoJb6M4GMZxY0NCD64kve/pMZ2d3Z297+X7f6zFNmBAMUXa6URl/q9UJSWPUPzrizFWRUlNLgEBWGCBBRZYYEEAFlhggQUWWBCABRZYYIEFFgRggQUWWGCBBQFYYIEFFlhgQQAWWGCBBRZYEIAFFlhggQUWBGCBBRZYYIEFAVhggQUWWGBBABZYYIEFFlgQgAUWWGCBBRYEYIEFFlhggQUBWGCBBRZYYEEAFlhggQUWWBCABRZYYIEFFgRggQUWWGCBBQFYYIEFFlhgQQAWWGCBBRZYEIAFFlhggQUWBGCBBRZYn6cCIcRXgvX/h9qcIVBqDdbEM8RCxGCB9QqXYRwHYDHBgwXWl8eKZKiESHI3Ba1kWs3fKixcaJUl1YyeBm7Ocq+yLItUiVBGnXxenSHJolIKEcwHq6ikbOX1YGVzQCTN8LPmSLreghUl9sN4Uw7yajMrLC0TZ1ImzqY6FEop0+pIaEN5HaoOxVuwEqFyc4I46uSlzOLqgxlh6UaR9l3VYWl9Fdoxb1Q90KJtu41pwwFW/WHhTtW8i7TafLCqRsk6bsGw63L9qurXRmuIlbT9lDQnlXU+nBFW1Q2qnZbDprWa2tjR90LZFqx1/+Td/HpGWLlrLDvIwTcx6dQ1Vrntbig68cDms3JwbA5Y1azs1ger6sNV/bbIw1jU81MvNAGrl58RVn8ozW+btF08iGFoAlYvP3csfVur1gJBEIA1uBmue5dhZDOyO2epbmgCVi8/I6x0MMHH9pjsTfBhNzQBq5uPZoQlB0uH3DZG4EZqQ26fL3sZq5uf09Ih6qw3i/pm6BZO0qZX7rrUS68Xsbr5ZE4rePMk08pk9aUZugfqppvs6AM1Acvlo/StP+6EbW06z8hJqxbYp2BZPQUnFsLsKuhQdaHqn5ewbF7KXIn0jWO5MqOQ7RaNLPtbNMmmhimj0GUmYLl8Gs0Lq4wyPbTu1l2QKqHSouzs3OlDIslW5SQsnY/NXmFplyNvEuuLV/Tau9BzwiraDUSwXmysztYWWNtL1psXeumgIrDGaqXvBfUuvtqUYI3V2t1wk1e2msFluJJm6zDJXv/fIfjPP7DAAgsssCiwwAILLLDAosACCyywwAKLAgsssMACC6zt9fDz/v75tyOB+98PD2+ORgKffjw4OP1uJPDxl+Xy8v1I4MPF3t7VNyOB4/vF4uzdzrG+39f1kz/w66Guv/yBvw90KX/gZKkr8Qf+2dOV+gNHC12/7RxrabD2/a31bLAO/a11YbAO/K21MFhLf2s9Gqw9f2vdGqzFu11jnVusE2/gxmI9eQOnFuvYG7i0WH7uK4t15w2cWazrXWP9a7H8f/bQYvm/6IPF+sF/pVssf19Ii/WH/0K2WH/uGuvEWC39gSdj9Twy+Rqri5EZx1gt/IE7Y/XoD1wbq9vd3w1PlufnD2OBp+ebm/uxwPHF6emnscDR4vLy41jg7vHq6sNY4Pr27OyYdRaLUrDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssL6u+k+AAQCR9eHtLKvLfwAAAABJRU5ErkJggg==" data-original="/2021/03/30/tong-yuan-ce-lue-yu-kua-yu/image-20210404151218169.png" class="" title="非简单请求">
+
+<h6 id="Step-1-预检请求（preflight-request）"><a href="#Step-1-预检请求（preflight-request）" class="headerlink" title="Step 1 预检请求（preflight request）"></a>Step 1 预检请求（preflight request）</h6><p>在发送我们的请求前，浏览器会自己发送如下所示的预检请求：</p>
+<pre class="line-numbers language-http" data-language="http"><code class="language-http">OPTIONS /service.json
+<span class="token header-name keyword">Host:</span> site.com
+<span class="token header-name keyword">Origin:</span> https://javascript.info
+<span class="token header-name keyword">Access-Control-Request-Method:</span> PATCH
+<span class="token header-name keyword">Access-Control-Request-Headers:</span> Content-Type,API-Key<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<ul>
+<li>方法：<code>OPTIONS</code>。</li>
+<li>路径 —— 与主请求完全相同：<code>/service.json</code>。</li>
+<li>特殊跨源头：<ul>
+<li><code>Origin</code> —— 来源。</li>
+<li><code>Access-Control-Request-Method</code> —— 请求方法。</li>
+<li><code>Access-Control-Request-Headers</code> —— 以逗号分隔的“非简单” header 列表。</li>
+</ul>
+</li>
+</ul>
+<h6 id="Step-2-预检响应（preflight-response）"><a href="#Step-2-预检响应（preflight-response）" class="headerlink" title="Step 2 预检响应（preflight response）"></a>Step 2 预检响应（preflight response）</h6><p>服务应响应状态 200 和 header：</p>
+<ul>
+<li><code>Access-Control-Allow-Origin: https://javascript.info</code></li>
+<li><code>Access-Control-Allow-Methods: PATCH</code></li>
+<li><code>Access-Control-Allow-Headers: Content-Type,API-Key</code>。</li>
+</ul>
+<p>这将允许后续通信，否则会触发错误。</p>
+<p>如果服务器将来期望其他方法和 header，则可以通过将这些方法和 header 添加到列表中来预先允许它们。</p>
+<p>例如，此响应还允许 <code>PUT</code>、<code>DELETE</code> 以及其他 header：</p>
+<pre class="line-numbers language-http" data-language="http"><code class="language-http">200 OK
+<span class="token header-name keyword">Access-Control-Allow-Origin:</span> https://javascript.info
+<span class="token header-name keyword">Access-Control-Allow-Methods:</span> PUT,PATCH,DELETE
+<span class="token header-name keyword">Access-Control-Allow-Headers:</span> API-Key,Content-Type,If-Modified-Since,Cache-Control
+<span class="token header-name keyword">Access-Control-Max-Age:</span> 86400<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>现在，浏览器可以看到 <code>PATCH</code> 在 <code>Access-Control-Allow-Methods</code> 中，<code>Content-Type,API-Key</code> 在列表 <code>Access-Control-Allow-Headers</code> 中，因此它将发送主请求。</p>
+<p>如果 <code>Access-Control-Max-Age</code> 带有一个表示秒的数字，则在给定的时间内，预检权限会被缓存。上面的响应将被缓存 86400 秒，也就是一天。在此时间范围内，后续请求将不会触发预检。假设它们符合缓存的配额，则将直接发送它们。</p>
+<h6 id="Step-3-实际请求（actual-request）"><a href="#Step-3-实际请求（actual-request）" class="headerlink" title="Step 3 实际请求（actual request）"></a>Step 3 实际请求（actual request）</h6><p>预检成功后，浏览器现在发出主请求。这里的算法与简单请求的算法相同。</p>
+<p>主请求具有 <code>Origin</code> header（因为它是跨源的）：</p>
+<pre class="line-numbers language-http" data-language="http"><code class="language-http">PATCH /service.json
+<span class="token header-name keyword">Host:</span> site.com
+<span class="token header-name keyword">Content-Type:</span> application/json
+<span class="token header-name keyword">API-Key:</span> secret
+<span class="token header-name keyword">Origin:</span> https://javascript.info<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h6 id="Step-4-实际响应（actual-response）"><a href="#Step-4-实际响应（actual-response）" class="headerlink" title="Step 4 实际响应（actual response）"></a>Step 4 实际响应（actual response）</h6><p>服务器不应该忘记在主响应中添加 <code>Access-Control-Allow-Origin</code>。成功的预检并不能免除此要求：</p>
+<pre class="line-numbers language-http" data-language="http"><code class="language-http"><span class="token header-name keyword">Access-Control-Allow-Origin:</span> https://javascript.info<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>然后，JavaScript 可以读取主服务器响应了。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E7%BD%91%E7%BB%9C/" rel="tag"><i class="fa fa-tag"></i> 网络</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/03/27/ji-suan-ji-san-ji/" rel="prev" title="计算机三级">
+      <i class="fa fa-chevron-left"></i> 计算机三级
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/04/08/yi-dong-duan-gua-pei/" rel="next" title="移动端适配">
+      移动端适配 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="lv-container" data-id="city" data-uid="MTAyMC81MTYzMS8yODExMg=="></div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%90%8C%E6%BA%90%E7%AD%96%E7%95%A5"><span class="nav-number">1.</span> <span class="nav-text">同源策略</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CSRF%E6%94%BB%E5%87%BB"><span class="nav-number">2.</span> <span class="nav-text">CSRF攻击</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%98%B2%E6%8A%A4%E7%AD%96%E7%95%A5"><span class="nav-number">2.0.1.</span> <span class="nav-text">防护策略</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%90%8C%E6%BA%90%E6%A3%80%E6%B5%8B"><span class="nav-number">2.0.2.</span> <span class="nav-text">同源检测</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8Origin-Header%E7%A1%AE%E5%AE%9A%E6%9D%A5%E6%BA%90%E5%9F%9F%E5%90%8D"><span class="nav-number">2.0.2.1.</span> <span class="nav-text">使用Origin Header确定来源域名</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8Referer-Header%E7%A1%AE%E5%AE%9A%E6%9D%A5%E6%BA%90%E5%9F%9F%E5%90%8D"><span class="nav-number">2.0.2.2.</span> <span class="nav-text">使用Referer Header确定来源域名</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%97%A0%E6%B3%95%E7%A1%AE%E8%AE%A4%E6%9D%A5%E6%BA%90%E5%9F%9F%E5%90%8D"><span class="nav-number">2.0.2.3.</span> <span class="nav-text">无法确认来源域名</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E9%98%BB%E6%AD%A2%E5%A4%96%E5%9F%9F%E8%AF%B7%E6%B1%82"><span class="nav-number">2.0.2.4.</span> <span class="nav-text">如何阻止外域请求</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#CSRF-Token"><span class="nav-number">2.0.3.</span> <span class="nav-text">CSRF Token</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%B8%89%E4%B8%AA%E6%AD%A5%E9%AA%A4"><span class="nav-number">2.0.3.1.</span> <span class="nav-text">三个步骤</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F%E6%A0%A1%E9%AA%8C"><span class="nav-number">2.0.3.2.</span> <span class="nav-text">分布式校验</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8F%8C%E9%87%8DCookie%E9%AA%8C%E8%AF%81"><span class="nav-number">2.0.4.</span> <span class="nav-text">双重Cookie验证</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Samesite-Cookie%E5%B1%9E%E6%80%A7"><span class="nav-number">2.0.5.</span> <span class="nav-text">Samesite Cookie属性</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B7%A8%E5%9F%9F%E8%AF%B7%E6%B1%82"><span class="nav-number">3.</span> <span class="nav-text">跨域请求</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-JSONP"><span class="nav-number">3.0.1.</span> <span class="nav-text">1. JSONP</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-%E8%B7%A8%E5%9F%9F%E8%B5%84%E6%BA%90%E5%85%B1%E4%BA%AB%EF%BC%88CORS%EF%BC%89"><span class="nav-number">3.0.2.</span> <span class="nav-text">2. 跨域资源共享（CORS）</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%AE%80%E5%8D%95%E8%AF%B7%E6%B1%82"><span class="nav-number">3.0.2.1.</span> <span class="nav-text">简单请求</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%94%A8%E4%BA%8E%E7%AE%80%E5%8D%95%E8%AF%B7%E6%B1%82%E7%9A%84CORS"><span class="nav-number">3.0.2.2.</span> <span class="nav-text">用于简单请求的CORS</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%9D%9E%E7%AE%80%E5%8D%95%E8%AF%B7%E6%B1%82"><span class="nav-number">3.0.2.3.</span> <span class="nav-text">非简单请求</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#Step-1-%E9%A2%84%E6%A3%80%E8%AF%B7%E6%B1%82%EF%BC%88preflight-request%EF%BC%89"><span class="nav-number">3.0.2.3.1.</span> <span class="nav-text">Step 1 预检请求（preflight request）</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#Step-2-%E9%A2%84%E6%A3%80%E5%93%8D%E5%BA%94%EF%BC%88preflight-response%EF%BC%89"><span class="nav-number">3.0.2.3.2.</span> <span class="nav-text">Step 2 预检响应（preflight response）</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#Step-3-%E5%AE%9E%E9%99%85%E8%AF%B7%E6%B1%82%EF%BC%88actual-request%EF%BC%89"><span class="nav-number">3.0.2.3.3.</span> <span class="nav-text">Step 3 实际请求（actual request）</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#Step-4-%E5%AE%9E%E9%99%85%E5%93%8D%E5%BA%94%EF%BC%88actual-response%EF%BC%89"><span class="nav-number">3.0.2.3.4.</span> <span class="nav-text">Step 4 实际响应（actual response）</span></a></li></ol></li></ol></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="忞月"
+      src="/./images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">忞月</p>
+  <div class="site-description" itemprop="description">今天你做了什么？</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">32</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">29</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/minyue-hcm" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;minyue-hcm" rel="noopener" target="_blank"><i class="fa fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+      </div>
+      
+        <script type="text/javascript" charset="utf-8" src="/js/tagcloud.js"></script>
+        <script type="text/javascript" charset="utf-8" src="/js/tagcanvas.js"></script>
+        <div class="widget-wrap">
+            <div id="myCanvasContainer" class="widget tagcloud">
+                <canvas width="250" height="250" id="resCanvas" style="width:100%">
+                    <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS-Module/" rel="tag">CSS Module</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSS-tips/" rel="tag">CSS tips</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Flex%E5%B8%83%E5%B1%80/" rel="tag">Flex布局</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Markdown/" rel="tag">Markdown</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/OAuth/" rel="tag">OAuth</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Promise/" rel="tag">Promise</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cookie/" rel="tag">cookie</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/" rel="tag">git</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/gitbub/" rel="tag">gitbub</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/" rel="tag">hexo</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iconfont/" rel="tag">iconfont</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/js%E5%9F%BA%E7%A1%80/" rel="tag">js基础</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/js%E5%BC%82%E6%AD%A5/" rel="tag">js异步</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/node/" rel="tag">node</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react/" rel="tag">react</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react-hook/" rel="tag">react hook</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/react%E5%9F%BA%E7%A1%80/" rel="tag">react基础</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%89%8D%E7%AB%AF/" rel="tag">前端</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AE%9A%E6%97%B6%E5%99%A8/" rel="tag">定时器</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AE%9E%E6%88%98/" rel="tag">实战</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AE%9E%E8%B7%B5/" rel="tag">实践</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%B0%8F%E7%A8%8B%E5%BA%8F/" rel="tag">小程序</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%B5%8F%E8%A7%88%E5%99%A8/" rel="tag">浏览器</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%A7%BB%E5%8A%A8%E7%AB%AF/" rel="tag">移动端</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%AE%97%E6%B3%95/" rel="tag">算法</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BD%91%E7%BB%9C/" rel="tag">网络</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BD%91%E7%BB%9C%E8%AF%B7%E6%B1%82/" rel="tag">网络请求</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E4%B8%89%E7%BA%A7/" rel="tag">计算机三级</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a><span class="tag-list-count">1</span></li></ul>
+                </canvas>
+            </div>
+        </div>
+      
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">忞月</span>
+</div>
+<!--
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+-->
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script size="300" alpha="0.6" zIndex="-1" src="/lib/canvas-ribbon/canvas-ribbon.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/three-waves.min.js"></script>
+    <script defer src="/lib/three/canvas_lines.min.js"></script>
+    <script defer src="/lib/three/canvas_sphere.min.js"></script>
+
+
+  
+  <script>
+    (function(){
+      var canonicalURL, curProtocol;
+      //Get the <link> tag
+      var x=document.getElementsByTagName("link");
+		//Find the last canonical URL
+		if(x.length > 0){
+			for (i=0;i<x.length;i++){
+				if(x[i].rel.toLowerCase() == 'canonical' && x[i].href){
+					canonicalURL=x[i].href;
+				}
+			}
+		}
+    //Get protocol
+	    if (!canonicalURL){
+	    	curProtocol = window.location.protocol.split(':')[0];
+	    }
+	    else{
+	    	curProtocol = canonicalURL.split(':')[0];
+	    }
+      //Get current URL if the canonical URL does not exist
+	    if (!canonicalURL) canonicalURL = window.location.href;
+	    //Assign script content. Replace current URL with the canonical URL
+      !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=canonicalURL,t=document.referrer;if(!e.test(r)){var n=(String(curProtocol).toLowerCase() === 'https')?"https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif":"//api.share.baidu.com/s.gif";t?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var i=new Image;i.src=n}}(window);})();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+<script>
+NexT.utils.loadComments(document.querySelector('#lv-container'), () => {
+  window.livereOptions = {
+    refer: location.pathname.replace(CONFIG.root, '').replace('index.html', '')
+  };
+  (function(d, s) {
+    var j, e = d.getElementsByTagName(s)[0];
+    if (typeof LivereTower === 'function') { return; }
+    j = d.createElement(s);
+    j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+    j.async = true;
+    e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+});
+</script>
+
+<script>
+            window.imageLazyLoadSetting = {
+                isSPA: false,
+                processImages: null,
+            };
+        </script><script>window.addEventListener("load",function(){var t=/\.(gif|jpg|jpeg|tiff|png)$/i,r=/^data:image\/[a-z]+;base64,/;Array.prototype.slice.call(document.querySelectorAll("img[data-original]")).forEach(function(a){var e=a.parentNode;"A"===e.tagName&&(e.href.match(t)||e.href.match(r))&&(e.href=a.dataset.original)})});</script><script>!function(n){n.imageLazyLoadSetting.processImages=i;var e=n.imageLazyLoadSetting.isSPA,r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]"));function i(){e&&(r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]")));for(var t,a=0;a<r.length;a++)0<=(t=(t=r[a]).getBoundingClientRect()).bottom&&0<=t.left&&t.top<=(n.innerHeight||document.documentElement.clientHeight)&&function(){var t,e,n,i,o=r[a];t=o,e=function(){r=r.filter(function(t){return o!==t})},n=new Image,i=t.getAttribute("data-original"),n.onload=function(){t.src=i,e&&e()},n.src=i}()}i(),n.addEventListener("scroll",function(){var t,e;t=i,e=n,clearTimeout(t.tId),t.tId=setTimeout(function(){t.call(e)},500)})}(this);</script></body>
+</html>
