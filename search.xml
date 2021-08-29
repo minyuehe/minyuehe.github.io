@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title></title>
-    <url>/2021/08/28/centos-huan-jing-da-jian/</url>
+    <title>centOS环境搭建</title>
+    <url>/2021/08/29/centos-huan-jing-da-jian/</url>
     <content><![CDATA[<h2 id="centOS环境搭建"><a href="#centOS环境搭建" class="headerlink" title="centOS环境搭建"></a>centOS环境搭建</h2><p>最近，买了一个腾讯云的服务器，上传了自己的博客，过程中也是很多辛酸泪的！</p>
 <p>mark&amp;share</p>
+<a id="more"></a>
+
 <h4 id="一，构建node环境"><a href="#一，构建node环境" class="headerlink" title="一，构建node环境"></a>一，构建node环境</h4><ul>
 <li>远程登录</li>
 </ul>
@@ -31,19 +33,20 @@
 <pre class="line-numbers language-none"><code class="language-none">vim ~/.bash_profile      // 在PATH后面追加全局路径就好了，这样所有的nodejs包cli都可以全局使用
 source ~/.bash_profile<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
 
-<img data-src="/2021/08/28/centos-huan-jing-da-jian/image-20210828234310703.png" class="" title="image-20210828234310703"> 
+<img data-src="/2021/08/29/centos-huan-jing-da-jian/image-20210828234310703.png" class="" title="image-20210828234310703"> 
 
-<img data-src="centos环境搭建/image-20210828234310703.png" alt="image-20210828234310703" style="zoom:50%;"> 
 
-<ol start="2">
-<li> 在/etc/profile中</li>
+
+</li>
 </ol>
+<ol start="2">
+<li><p>在/etc/profile中</p>
 <pre class="line-numbers language-none"><code class="language-none">vim /etc/profile        // 在PATH后面追加全局路径就好了，这样所有的nodejs包cli都可以全局使用
 source /etc/profile<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
 
-<img data-src="centos环境搭建/image-20210828234310703.png" alt="image-20210828234310703" style="zoom:50%;"> 
-
-<p>3.临时会话型</p>
+<img data-src="/2021/08/29/centos-huan-jing-da-jian/image-20210828234410774.png" class="" title="image-20210828234410774">  
+</li>
+<li><p>临时会话型</p>
 <pre class="line-numbers language-none"><code class="language-none">PATH=$PATH:/usr/local/mysql/bin
 alias mysql=/usr/local/mysql/bin/mysql<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
 </li>
@@ -75,12 +78,12 @@ nvm install v10.16.3<span aria-hidden="true" class="line-numbers-rows"><span></s
 <li><p>查看已安装node版本</p>
 <pre class="line-numbers language-none"><code class="language-none">nvm ls<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
 
-<img data-src="centos环境搭建/image-20210828235938048.png" alt="image-20210828235938048" style="zoom:67%;"> 
+ <img data-src="/2021/08/29/centos-huan-jing-da-jian/image-20210828235938048.png" class="" title="image-20210828235938048">
 </li>
 <li><p>切换版本</p>
 <pre class="line-numbers language-none"><code class="language-none">nvm use v6.9.5<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
 
-<img data-src="centos环境搭建/image-20210829000014670.png" alt="image-20210829000014670" style="zoom: 67%;"> 
+ <img data-src="/2021/08/29/centos-huan-jing-da-jian/image-20210829000014670.png" class="" title="image-20210829000014670">
 </li>
 </ol>
 </li>
@@ -228,21 +231,22 @@ http {
 <li><p>检查是否安装成功</p>
 <pre class="line-numbers language-none"><code class="language-none">yum repolist enabled | grep "mysql.*-community.*"<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
 
-<img data-src="centos%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/image-20210829010730437.png" alt="image-20210829010730437" style="zoom:50%;"> 
+<img data-src="/2021/08/29/centos-huan-jing-da-jian/image-20210829010730437.png" class="" title="image-20210829010730437"> 
 </li>
 <li><p>安装mysql</p>
 <pre class="line-numbers language-none"><code class="language-none">yum install mysql-community-server<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
 
 <p>过程中很曲折，辛酸泪</p>
 <ul>
-<li>报错Error: Unable to find a match: mysql-community-server</li>
-</ul>
-<img data-src="centos环境搭建/image-20210829010841960.png" alt="image-20210829010841960" style="zoom:50%;"> 
+<li><p>报错Error: Unable to find a match: mysql-community-server</p>
+<img data-src="/2021/08/29/centos-huan-jing-da-jian/image-20210829010841960.png" class="" title="image-20210829010841960">
 
+</li>
+</ul>
 <pre class="line-numbers language-none"><code class="language-none">解决办法
 先执行 yum module disable mysql，然后再执行yum -y install mysql-community-server<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
 
-<img data-src="centos环境搭建/image-20210829011451868.png" alt="image-20210829011451868" style="zoom:50%;"> 
+<img data-src="/2021/08/29/centos-huan-jing-da-jian/image-20210829011451868.png" class="" title="image-20210829011451868"> 
 </li>
 <li><p>启动mysql服务</p>
 <pre class="line-numbers language-none"><code class="language-none">systemctl start mysqld
@@ -254,7 +258,7 @@ service mysqld start<span aria-hidden="true" class="line-numbers-rows"><span></s
 或者
 service mysqld status<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
 
-<img data-src="centos环境搭建/image-20210829011625767.png" alt="image-20210829011625767" style="zoom:50%;"> 
+<img data-src="/2021/08/29/centos-huan-jing-da-jian/image-20210829011625767.png" class="" title="image-20210829011625767"> 
 </li>
 <li><p>设置开机启动</p>
 <pre class="line-numbers language-none"><code class="language-none">systemctl enable mysqld
@@ -274,7 +278,7 @@ grep 'temporary password' /var/log/mysqld.log<span aria-hidden="true" class="lin
 <pre class="line-numbers language-none"><code class="language-none">use mysql;
 select host, user from user;  #可以看到root默认权限是localhost<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
 
-<img data-src="centos环境搭建/image-20210829142220138.png" alt="image-20210829142220138" style="zoom:50%;"> 
+ <img data-src="/2021/08/29/centos-huan-jing-da-jian/image-20210829142220138.png" class="" title="image-20210829142220138">
 
 <pre class="line-numbers language-none"><code class="language-none">#授权 root 用户的所有权限并设置远程访问
 GRANT ALL ON *.* TO 'root'@'%';<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
@@ -364,6 +368,13 @@ mysql&gt;source ~/blog.sql<span aria-hidden="true" class="line-numbers-rows"><sp
 </li>
 </ol>
 ]]></content>
+      <categories>
+        <category>服务器</category>
+      </categories>
+      <tags>
+        <tag>centOS</tag>
+        <tag>mysql</tag>
+      </tags>
   </entry>
   <entry>
     <title>websocket</title>
@@ -380,7 +391,7 @@ mysql&gt;source ~/blog.sql<span aria-hidden="true" class="line-numbers-rows"><sp
 <h2 id="websocket简介"><a href="#websocket简介" class="headerlink" title="websocket简介"></a>websocket简介</h2><p>最大的特点就是：</p>
 <p>服务端可以主动向客户端推送消息，客户端也可以主动向服务器发送消息</p>
 <p>真正的双向平等对话（属于<a href="https://cloud.tencent.com/developer/article/1407649">服务器推送技术</a>的一种）</p>
-<img data-src="websocket/bg2017051502.png" alt="img" style="zoom: 67%;"> 
+<img data-src="/2021/05/28/websocket/bg2017051502.png" class="" title="img"> 
 
 <p><strong>特点</strong></p>
 <ol>
